@@ -24,21 +24,41 @@ import {
   User,
   Menu,
   X,
-  ExternalLink,
   BarChart3,
   MousePointerClick,
   Star,
   Globe2,
-  Wand2,
   MessageSquareText,
   ChevronDown,
   Eye,
   BriefcaseBusiness,
-  Smartphone,
   Search,
   Wrench,
   Rocket,
   LayoutTemplate,
+  Scissors,
+  UtensilsCrossed,
+  Dumbbell,
+  HeartPulse,
+  Store,
+  Camera,
+  Handshake,
+  Hammer,
+  ShoppingBag,
+  Image as ImageIcon,
+  Images,
+  Quote,
+  ClipboardCheck,
+  BadgeCheck,
+  Compass,
+  Megaphone,
+  MonitorSmartphone,
+  PenTool,
+  Send,
+  Goal,
+  FileQuestion,
+  BadgeEuro,
+  MapPinned,
 } from "lucide-react";
 
 // ============================================================
@@ -92,6 +112,27 @@ const BUSINESS_TYPES = [
   "Other",
 ];
 
+const PROJECT_MODES = [
+  {
+    value: "Improve current website",
+    label: "Improve my current website",
+    eyebrow: "Already online",
+    description:
+      "Best when you have a website, but it feels outdated, unclear, slow or not persuasive enough.",
+    points: ["Sharper first impression", "Better copy and structure", "More calls, bookings or messages"],
+    icon: Wrench,
+  },
+  {
+    value: "Build new website",
+    label: "Build a completely new website",
+    eyebrow: "Fresh start",
+    description:
+      "Best when you need a first website or want to replace the old one with a cleaner direction.",
+    points: ["New structure", "New visual direction", "Launch-ready plan"],
+    icon: Rocket,
+  },
+];
+
 const WEBSITE_GOALS = [
   { label: "Get bookings", weight: 2, tag: "conversion" },
   { label: "Show portfolio", weight: 1, tag: "visual" },
@@ -102,6 +143,128 @@ const WEBSITE_GOALS = [
   { label: "Replace old website", weight: 1, tag: "rebuild" },
   { label: "Look more premium", weight: 1, tag: "brand" },
 ];
+
+const GOAL_META = {
+  "Get bookings": {
+    icon: CalendarDays,
+    description: "Make it easy for visitors to choose a time, request an appointment or start a booking.",
+    outcome: "More appointments",
+  },
+  "Show portfolio": {
+    icon: Images,
+    description: "Show the quality of your work with projects, galleries, before/after images or case studies.",
+    outcome: "More trust in your work",
+  },
+  "Sell products": {
+    icon: ShoppingBag,
+    description: "Present products clearly and guide people toward payment, checkout or a sales request.",
+    outcome: "More product sales",
+  },
+  "Collect leads": {
+    icon: Send,
+    description: "Turn interested visitors into enquiries through forms, WhatsApp, calls or consultation requests.",
+    outcome: "More serious enquiries",
+  },
+  "Build credibility": {
+    icon: BadgeCheck,
+    description: "Use reviews, proof, photos, process and clear messaging to make the business feel reliable.",
+    outcome: "More confidence",
+  },
+  "Promote services": {
+    icon: Megaphone,
+    description: "Explain what you offer, who it is for and why people should choose you.",
+    outcome: "Clearer services",
+  },
+  "Replace old website": {
+    icon: Wrench,
+    description: "Keep what still works, but rebuild the parts that feel dated, confusing or hard to use.",
+    outcome: "A better version",
+  },
+  "Look more premium": {
+    icon: Sparkles,
+    description: "Improve the visual direction so the business feels more professional, polished and memorable.",
+    outcome: "Stronger brand feel",
+  },
+};
+
+const SECTION_META = {
+  Home: LayoutTemplate,
+  Services: BriefcaseBusiness,
+  Pricing: BadgeEuro,
+  Gallery: Images,
+  About: User,
+  Contact: Mail,
+  Booking: CalendarDays,
+  Reviews: Quote,
+  FAQ: FileQuestion,
+  Blog: FileText,
+  Shop: ShoppingBag,
+  Location: MapPinned,
+  "Before / After": ImageIcon,
+};
+
+const CONTENT_META = {
+  logo: BadgeCheck,
+  text: PenTool,
+  images: Images,
+  colors: Palette,
+  domain: Globe2,
+  hosting: ShieldCheck,
+};
+
+function getBusinessTypeMeta(type) {
+  const lower = type.toLowerCase();
+
+  if (lower.includes("barber") || lower.includes("hair")) {
+    return { icon: Scissors, description: "Bookings, services, reviews and location need to feel effortless." };
+  }
+
+  if (lower.includes("restaurant")) {
+    return { icon: UtensilsCrossed, description: "Menu, atmosphere, location and quick contact should be obvious." };
+  }
+
+  if (lower.includes("coach") || lower.includes("consultant")) {
+    return { icon: Handshake, description: "Trust, expertise and a clear path to a call matter most." };
+  }
+
+  if (lower.includes("tattoo")) {
+    return { icon: PenTool, description: "Portfolio, style, booking and artist credibility lead the experience." };
+  }
+
+  if (lower.includes("artist") || lower.includes("portfolio")) {
+    return { icon: Camera, description: "Visual work needs room to breathe, with a simple enquiry path." };
+  }
+
+  if (lower.includes("local service")) {
+    return { icon: Hammer, description: "People need to understand the service, trust it and contact quickly." };
+  }
+
+  if (lower.includes("webshop")) {
+    return { icon: Store, description: "Products, proof and checkout steps need to feel clear and safe." };
+  }
+
+  if (lower.includes("fitness") || lower.includes("gym")) {
+    return { icon: Dumbbell, description: "Programs, memberships, transformations and signups should be easy to scan." };
+  }
+
+  if (lower.includes("beauty") || lower.includes("wellness")) {
+    return { icon: HeartPulse, description: "Services, atmosphere, pricing and booking should feel calm and premium." };
+  }
+
+  return { icon: Compass, description: "We will shape the structure around your audience and offer." };
+}
+
+function getGoalMeta(label) {
+  return GOAL_META[label] || { icon: Goal, description: "Clarify what success should look like for this website.", outcome: "Clearer direction" };
+}
+
+function getSectionIcon(label) {
+  return SECTION_META[label] || Layers;
+}
+
+function getContentIcon(key) {
+  return CONTENT_META[key] || FileText;
+}
 
 const STYLE_DIRECTIONS = [
   {
@@ -248,7 +411,7 @@ const PACKAGES = {
       "Contact form or WhatsApp flow",
       "Google Maps",
       "SEO setup",
-      "Google Analytics setup",
+      "Visitor insights setup",
       "2 revision rounds",
     ],
     probable: ["Hero", "Services", "Pricing", "Gallery", "Reviews", "Contact", "Maps", "Analytics"],
@@ -262,7 +425,7 @@ const PACKAGES = {
     monthly: 34,
     rawValue: 2690,
     badge: "Complete website package",
-    bestFor: "Businesses that need the full normal website package: booking, CMS, payments, multilingual, animations and tracking.",
+    bestFor: "Businesses that need the full normal website package: booking, editable content, payments, languages, animations and launch support.",
     description:
       "Best for businesses that need the complete website package with advanced features and stronger polish.",
     included: [
@@ -275,7 +438,7 @@ const PACKAGES = {
       "Multilingual structure",
       "Animations",
       "SEO setup",
-      "Google Analytics event tracking",
+      "Basic visitor insights setup",
       "Cookie / analytics consent banner",
       "Content/copy polish",
       "3 revision rounds",
@@ -288,36 +451,52 @@ const PACKAGES = {
 
 const PORTFOLIO_CONCEPTS = [
   {
-    title: "Premium Barber Website",
+    title: "Premium Barber Launch",
     type: "Barber / salon",
+    status: "Featured concept",
+    outcome: "Booking-first mobile flow",
     description:
-      "Dark masculine design with services, pricing, gallery, reviews, booking CTA and location section.",
+      "A sharp dark website direction with prices, services, reviews, gallery, location and a booking CTA that stays easy to find.",
     palette: ["#09090b", "#3f2f20", "#d6b179"],
-    sections: ["Booking", "Gallery", "Reviews", "Maps"],
+    sections: ["Booking", "Prices", "Gallery", "Reviews"],
+    highlights: ["Clear service menu", "Mobile booking buttons", "Location proof"],
+    icon: Scissors,
   },
   {
-    title: "Local Service Website",
+    title: "Local Service Enquiries",
     type: "Contractor / repair / cleaning",
+    status: "Lead-focused build",
+    outcome: "Fewer doubts before contact",
     description:
-      "Conversion-focused structure with clear offer, service areas, trust signals, FAQ and fast contact options.",
-    palette: ["#0f172a", "#2563eb", "#f8fafc"],
-    sections: ["Leads", "FAQ", "Reviews", "Call CTA"],
+      "A practical structure that explains the service area, shows proof, answers common questions and gives visitors quick contact options.",
+    palette: ["#0f172a", "#0ea5e9", "#f8fafc"],
+    sections: ["Services", "Reviews", "FAQ", "Call CTA"],
+    highlights: ["Service-area clarity", "Trust signals", "Fast quote flow"],
+    icon: Hammer,
   },
   {
-    title: "Coach / Consultant Website",
+    title: "Consultant Credibility Site",
     type: "Personal brand",
+    status: "Trust-first direction",
+    outcome: "Warmer first call requests",
     description:
-      "Credibility-first layout with services, about section, lead capture, testimonials and booking flow.",
-    palette: ["#1f2937", "#d4a373", "#fff7ed"],
-    sections: ["Services", "About", "Lead form", "Testimonials"],
+      "A calm, expert-led layout with a clear offer, about story, testimonials and a simple path to book a consultation.",
+    palette: ["#1f2937", "#14b8a6", "#f8fafc"],
+    sections: ["Offer", "About", "Testimonials", "Call"],
+    highlights: ["Plain-language offer", "Proof-led copy", "Consultation path"],
+    icon: Handshake,
   },
   {
-    title: "Artist Portfolio",
+    title: "Artist Portfolio Showcase",
     type: "Creative / portfolio",
+    status: "Visual showcase",
+    outcome: "Projects that feel curated",
     description:
-      "Image-led layout with project showcases, commission inquiry, story section and visual direction.",
-    palette: ["#1e1b4b", "#a855f7", "#faf5ff"],
+      "An image-led portfolio direction with selected projects, a short story section and a commission enquiry path.",
+    palette: ["#111827", "#ec4899", "#fdf2f8"],
     sections: ["Projects", "Gallery", "About", "Inquiry"],
+    highlights: ["Project-led layout", "Commission CTA", "Strong visual rhythm"],
+    icon: Camera,
   },
 ];
 
@@ -349,8 +528,8 @@ const PROCESS_STEPS = [
 ];
 
 const steps = [
-  { title: "Business type", subtitle: "What kind of business is this for?", icon: Building2, noteKey: "business" },
-  { title: "Website goal", subtitle: "What should the website mainly achieve?", icon: Target, noteKey: "goals" },
+  { title: "Starting point", subtitle: "Are we improving an existing site or planning a new one?", icon: Rocket, noteKey: "business" },
+  { title: "Main outcome", subtitle: "What should the website make easier for the business?", icon: Goal, noteKey: "goals" },
   { title: "Style + colors", subtitle: "Choose the visual feeling and adjust colors.", icon: Palette, noteKey: "style" },
   { title: "Required sections", subtitle: "Select the sections your website needs.", icon: Layers, noteKey: "sections" },
   { title: "Functionality", subtitle: "Choose features that affect price and complexity.", icon: Settings, noteKey: "functionality" },
@@ -364,6 +543,7 @@ const steps = [
 ];
 
 const defaultAnswers = {
+  projectMode: "",
   businessType: "",
   goals: [],
   style: "",
@@ -417,31 +597,31 @@ function getSuggestedSelections(businessType, goals) {
   const goalText = goals.join(" ").toLowerCase();
 
   let sections = ["Home", "Services", "About", "Contact", "Reviews"];
-  let functionality = ["SEO setup", "Analytics"];
+  let functionality = ["SEO setup", "Google Analytics"];
 
   if (lowerBusiness.includes("barber") || lowerBusiness.includes("tattoo") || lowerBusiness.includes("beauty")) {
     sections = ["Home", "Services", "Pricing", "Gallery", "Booking", "Reviews", "Contact", "Location"];
-    functionality = ["Booking system", "WhatsApp button", "Google Maps", "SEO setup", "Analytics"];
+    functionality = ["Booking system", "WhatsApp button", "Google Maps", "SEO setup", "Google Analytics"];
   }
 
   if (lowerBusiness.includes("restaurant") || lowerBusiness.includes("café")) {
     sections = ["Home", "Services", "Pricing", "Gallery", "Reviews", "Contact", "Location", "FAQ"];
-    functionality = ["Google Maps", "WhatsApp button", "SEO setup", "Analytics"];
+    functionality = ["Google Maps", "WhatsApp button", "SEO setup", "Google Analytics"];
   }
 
   if (lowerBusiness.includes("artist") || lowerBusiness.includes("portfolio")) {
     sections = ["Home", "Gallery", "About", "Contact", "FAQ"];
-    functionality = ["Animations", "SEO setup", "Analytics"];
+    functionality = ["Animations", "SEO setup", "Google Analytics"];
   }
 
   if (lowerBusiness.includes("local service")) {
     sections = ["Home", "Services", "Pricing", "Reviews", "FAQ", "Contact", "Location", "Before / After"];
-    functionality = ["WhatsApp button", "Google Maps", "SEO setup", "Analytics"];
+    functionality = ["WhatsApp button", "Google Maps", "SEO setup", "Google Analytics"];
   }
 
   if (lowerBusiness.includes("webshop") || goalText.includes("sell products")) {
     sections = ["Home", "Shop", "About", "Reviews", "FAQ", "Contact"];
-    functionality = ["Online payment / deposit link", "CMS / editable content", "SEO setup", "Analytics"];
+    functionality = ["Online payment / deposit link", "CMS / editable content", "SEO setup", "Google Analytics"];
   }
 
   if (goalText.includes("bookings")) {
@@ -645,16 +825,16 @@ function HomePage({ onStart }) {
   };
 
   const navItems = [
-    ["Deliverables", "deliverables"],
-    ["Portfolio", "portfolio"],
+    ["What you get", "deliverables"],
+    ["Examples", "portfolio"],
     ["Packages", "packages"],
     ["Process", "process"],
     ["FAQ", "faq"],
   ];
 
   return (
-    <div className="bg-[radial-gradient(circle_at_top_left,#f4f4f5,transparent_30%),linear-gradient(to_bottom,#ffffff,#f4f4f5)]">
-      <header className="sticky top-0 z-40 border-b border-zinc-200 bg-white/85 backdrop-blur-xl">
+    <div className="bg-[linear-gradient(180deg,#fffdf7_0%,#eef7f6_42%,#f7f7fb_100%)]">
+      <header className="sticky top-0 z-40 border-b border-zinc-200 bg-white/90 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
           <Brand />
           <nav className="hidden items-center gap-6 text-sm font-medium text-zinc-600 lg:flex">
@@ -668,7 +848,7 @@ function HomePage({ onStart }) {
             <button onClick={() => scrollToId("packages")} className="rounded-full border border-zinc-200 px-4 py-2 text-sm font-medium hover:bg-zinc-50">
               View packages
             </button>
-            <button onClick={start} className="rounded-full bg-zinc-950 px-5 py-2.5 text-sm font-medium text-white hover:bg-zinc-800">
+            <button onClick={start} className="rounded-full bg-zinc-950 px-5 py-2.5 text-sm font-medium text-white shadow-lg shadow-amber-500/15 hover:bg-zinc-800">
               Start website plan
             </button>
           </div>
@@ -708,7 +888,7 @@ function HomePage({ onStart }) {
         <PortfolioSection />
         <PackagesSection onStart={start} />
         <ProcessSection />
-        <AnalyticsValueSection />
+        <PlainLanguageSection />
         <FAQSection />
         <FinalCTA onStart={start} />
       </main>
@@ -719,12 +899,12 @@ function HomePage({ onStart }) {
 function Brand() {
   return (
     <div className="flex items-center gap-3">
-      <div className="rounded-2xl bg-zinc-950 p-2 text-white shadow-lg shadow-zinc-950/20">
-        <Sparkles className="h-5 w-5" />
+      <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-zinc-950 text-sm font-black text-white shadow-lg shadow-amber-500/25 ring-2 ring-amber-300/60">
+        QW
       </div>
       <div>
-        <p className="font-semibold leading-none tracking-tight">QuickWeb Studio</p>
-        <p className="mt-1 text-xs text-zinc-500">AI-guided plans. Human-built websites.</p>
+        <p className="text-base font-black leading-none tracking-tight">QuickWeb Studio</p>
+        <p className="mt-1 text-xs font-medium text-zinc-500">Plain-English plans. Human-built sites.</p>
       </div>
     </div>
   );
@@ -732,61 +912,86 @@ function Brand() {
 
 function HeroSection({ onStart }) {
   return (
-    <section className="mx-auto grid max-w-7xl gap-10 px-4 py-16 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:px-8 lg:py-24">
+    <section className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 lg:grid-cols-[1.02fr_0.98fr] lg:px-8 lg:py-20">
       <div className="flex flex-col justify-center">
         <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
-          <p className="mb-5 inline-flex items-center gap-2 rounded-full border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-700 shadow-sm">
-            <Rocket className="h-4 w-4" /> Website concept + estimate in 3 minutes
+          <p className="mb-5 inline-flex items-center gap-2 rounded-full border border-amber-200 bg-amber-50 px-4 py-2 text-sm font-bold text-zinc-900 shadow-sm">
+            <Sparkles className="h-4 w-4 text-amber-600" /> Website plan + clear quote direction in minutes
           </p>
-          <h1 className="max-w-4xl text-4xl font-semibold tracking-tight text-zinc-950 sm:text-6xl lg:text-7xl">
-            You do not build the website. You define it. We build it.
+          <h1 className="max-w-4xl text-5xl font-black leading-[0.98] tracking-tight text-zinc-950 sm:text-6xl lg:text-7xl">
+            Websites that make your business obvious in 5 seconds.
           </h1>
-          <p className="mt-6 max-w-2xl text-lg leading-8 text-zinc-600">
-            QuickWeb Studio helps local businesses turn vague website ideas into a clear brief, visual direction, package recommendation and build plan.
+          <p className="mt-6 max-w-2xl text-lg leading-8 text-zinc-700">
+            QuickWeb Studio helps local businesses turn "I need a better website" into a clear plan: what to say, what to show, which features matter and what package fits.
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <button onClick={onStart} className="inline-flex items-center justify-center gap-2 rounded-full bg-zinc-950 px-6 py-4 font-medium text-white shadow-xl shadow-zinc-950/20 transition hover:-translate-y-0.5 hover:bg-zinc-800">
-              Start website plan <ArrowRight className="h-4 w-4" />
+            <button onClick={onStart} className="inline-flex items-center justify-center gap-2 rounded-full bg-zinc-950 px-6 py-4 font-bold text-white shadow-xl shadow-zinc-950/20 transition hover:-translate-y-0.5 hover:bg-zinc-800">
+              Plan my website <ArrowRight className="h-4 w-4" />
             </button>
-            <button onClick={() => scrollToId("portfolio")} className="inline-flex items-center justify-center gap-2 rounded-full border border-zinc-200 bg-white px-6 py-4 font-medium text-zinc-900 transition hover:-translate-y-0.5 hover:shadow-lg">
-              See example directions <Eye className="h-4 w-4" />
+            <button onClick={() => scrollToId("portfolio")} className="inline-flex items-center justify-center gap-2 rounded-full border border-zinc-200 bg-white px-6 py-4 font-bold text-zinc-900 transition hover:-translate-y-0.5 hover:shadow-lg">
+              View work examples <Eye className="h-4 w-4" />
             </button>
           </div>
           <div className="mt-8 grid gap-3 sm:grid-cols-3">
-            <TrustPill icon={Clock} title="Fast planning" text="Clear scope before calls" />
-            <TrustPill icon={ShieldCheck} title="Human build" text="Not DIY templates" />
-            <TrustPill icon={BarChart3} title="Trackable" text="Analytics-ready" />
+            <TrustPill icon={MessageSquareText} title="Plain copy" text="No vague web jargon" />
+            <TrustPill icon={MonitorSmartphone} title="Mobile-first" text="Built for quick decisions" />
+            <TrustPill icon={ShieldCheck} title="Human build" text="You are not left with a template" />
           </div>
         </motion.div>
       </div>
 
       <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }} className="relative">
-        <div className="absolute -inset-4 rounded-[2.5rem] bg-zinc-950/5 blur-2xl" />
-        <div className="relative overflow-hidden rounded-[2rem] border border-zinc-200 bg-white p-4 shadow-2xl shadow-zinc-200/80">
-          <div className="rounded-[1.5rem] bg-zinc-950 p-5 text-white">
-            <div className="mb-5 flex items-center justify-between">
+        <div className="relative overflow-hidden rounded-[2rem] border border-zinc-900 bg-zinc-950 p-4 shadow-2xl shadow-zinc-950/25">
+          <div className="rounded-[1.5rem] border border-white/10 bg-white/5 p-5 text-white">
+            <div className="mb-5 flex items-center justify-between gap-4">
               <div>
-                <p className="text-sm text-zinc-400">Live configurator preview</p>
-                <h3 className="text-2xl font-semibold">Business Website</h3>
+                <p className="text-sm font-medium text-amber-200">Brief snapshot</p>
+                <h3 className="text-2xl font-black">Premium Barber Studio</h3>
               </div>
-              <span className="rounded-full bg-white/10 px-3 py-1 text-xs text-zinc-200">Recommended</span>
+              <span className="rounded-full bg-amber-300 px-3 py-1 text-xs font-black text-zinc-950">Ready to build</span>
             </div>
-            <div className="grid gap-3">
-              <PreviewBlock label="Goal" value="Get bookings + build trust" />
-              <PreviewBlock label="Style" value="Dark masculine / premium" />
-              <PreviewBlock label="Website version" value="Hero → Services → Gallery → Reviews → Booking → Maps" />
+            <div className="overflow-hidden rounded-3xl border border-white/10 bg-[#151515]">
+              <div className="flex items-center gap-2 border-b border-white/10 px-4 py-3">
+                <span className="h-2.5 w-2.5 rounded-full bg-rose-400" />
+                <span className="h-2.5 w-2.5 rounded-full bg-amber-300" />
+                <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
+                <span className="ml-2 text-xs font-medium text-zinc-400">quickweb-preview.site</span>
+              </div>
+              <div className="grid gap-5 p-5 sm:grid-cols-[1.1fr_0.9fr]">
+                <div>
+                  <p className="mb-3 inline-flex rounded-full bg-white/10 px-3 py-1 text-xs font-bold text-zinc-200">Open until 19:00</p>
+                  <h4 className="text-3xl font-black leading-tight">Book a sharper cut without calling first.</h4>
+                  <p className="mt-3 text-sm leading-6 text-zinc-300">Services, prices, work examples and booking are all visible before visitors start scrolling.</p>
+                  <div className="mt-5 flex flex-wrap gap-2">
+                    <span className="rounded-full bg-amber-300 px-3 py-2 text-xs font-black text-zinc-950">Book now</span>
+                    <span className="rounded-full border border-white/15 px-3 py-2 text-xs font-bold text-white">View prices</span>
+                  </div>
+                </div>
+                <div className="grid gap-3">
+                  <div className="rounded-2xl bg-white/10 p-4">
+                    <Scissors className="mb-3 h-5 w-5 text-amber-200" />
+                    <p className="text-sm font-bold">Haircut + beard</p>
+                    <p className="mt-1 text-xs text-zinc-400">45 min · from €42</p>
+                  </div>
+                  <div className="rounded-2xl bg-white/10 p-4">
+                    <Quote className="mb-3 h-5 w-5 text-teal-200" />
+                    <p className="text-sm font-bold">4.9 average rating</p>
+                    <p className="mt-1 text-xs text-zinc-400">Reviews visible before contact</p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
           <div className="mt-4 grid gap-4 sm:grid-cols-2">
-            <div className="rounded-3xl border border-zinc-200 p-4">
-              <p className="text-xs uppercase tracking-wide text-zinc-400">Package cap</p>
-              <p className="mt-1 text-3xl font-semibold">€899</p>
-              <p className="mt-1 text-sm text-zinc-500">Business package</p>
+            <div className="rounded-3xl border border-white/10 bg-white p-4">
+              <p className="text-xs font-bold uppercase tracking-wide text-zinc-400">Package cap</p>
+              <p className="mt-1 text-3xl font-black">€899</p>
+              <p className="mt-1 text-sm text-zinc-500">Advanced website</p>
             </div>
-            <div className="rounded-3xl border border-zinc-200 p-4">
-              <p className="text-xs uppercase tracking-wide text-zinc-400">Deposit</p>
-              <p className="mt-1 text-3xl font-semibold">20%</p>
-              <p className="mt-1 text-sm text-zinc-500">Or book a call first</p>
+            <div className="rounded-3xl border border-white/10 bg-white p-4">
+              <p className="text-xs font-bold uppercase tracking-wide text-zinc-400">Plan includes</p>
+              <p className="mt-1 text-3xl font-black">8 sections</p>
+              <p className="mt-1 text-sm text-zinc-500">Booking, reviews, maps</p>
             </div>
           </div>
         </div>
@@ -798,18 +1003,13 @@ function HeroSection({ onStart }) {
 function TrustPill({ icon: Icon, title, text }) {
   return (
     <div className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm">
-      <Icon className="mb-2 h-5 w-5 text-zinc-700" />
-      <p className="font-medium text-zinc-950">{title}</p>
+      <div className="flex items-center gap-2">
+        <span className="rounded-xl bg-teal-50 p-2 text-teal-700">
+          <Icon className="h-4 w-4" />
+        </span>
+        <p className="font-black text-zinc-950">{title}</p>
+      </div>
       <p className="mt-1 text-sm text-zinc-500">{text}</p>
-    </div>
-  );
-}
-
-function PreviewBlock({ label, value }) {
-  return (
-    <div className="rounded-2xl bg-white/10 p-4">
-      <p className="text-xs uppercase tracking-wide text-zinc-400">{label}</p>
-      <p className="mt-1 font-medium text-white">{value}</p>
     </div>
   );
 }
@@ -818,9 +1018,9 @@ function PositioningStrip() {
   return (
     <section className="border-y border-zinc-200 bg-white">
       <div className="mx-auto grid max-w-7xl gap-4 px-4 py-8 sm:px-6 lg:grid-cols-3 lg:px-8">
-        <PositioningLine number="01" text="You do not make people build their own website." />
-        <PositioningLine number="02" text="You help them define what they need." />
-        <PositioningLine number="03" text="Then you build it for them." />
+        <PositioningLine number="01" text="Visitors understand the offer quickly." />
+        <PositioningLine number="02" text="The website shows proof before asking for trust." />
+        <PositioningLine number="03" text="The next step is obvious: book, call, message or buy." />
       </div>
     </section>
   );
@@ -828,19 +1028,27 @@ function PositioningStrip() {
 
 function PositioningLine({ number, text }) {
   return (
-    <div className="flex gap-4 rounded-3xl bg-zinc-50 p-5">
-      <span className="font-semibold text-zinc-400">{number}</span>
-      <p className="font-medium text-zinc-900">{text}</p>
+    <div className="flex gap-4 rounded-3xl border border-zinc-200 bg-white p-5 shadow-sm">
+      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl bg-amber-100 text-sm font-black text-zinc-950">{number}</span>
+      <p className="font-bold leading-6 text-zinc-900">{text}</p>
     </div>
   );
 }
 
-function SectionHeader({ eyebrow, title, text }) {
+function SectionHeader({ eyebrow, title, text, icon: Icon, invert = false, align = "center" }) {
+  const centered = align === "center";
   return (
-    <div className="mx-auto mb-10 max-w-3xl text-center">
-      <p className="mb-3 text-sm font-semibold uppercase tracking-[0.2em] text-zinc-500">{eyebrow}</p>
-      <h2 className="text-3xl font-semibold tracking-tight text-zinc-950 sm:text-5xl">{title}</h2>
-      {text && <p className="mt-4 text-lg leading-8 text-zinc-600">{text}</p>}
+    <div className={cn("mb-10 max-w-3xl", centered && "mx-auto text-center")}>
+      <div className={cn("mb-4 flex items-center gap-3", centered && "justify-center")}>
+        {Icon && (
+          <span className={cn("rounded-2xl p-3", invert ? "bg-white/10 text-amber-200" : "bg-zinc-950 text-white")}>
+            <Icon className="h-5 w-5" />
+          </span>
+        )}
+        <p className={cn("text-sm font-black uppercase tracking-[0.18em]", invert ? "text-zinc-300" : "text-zinc-500")}>{eyebrow}</p>
+      </div>
+      <h2 className={cn("text-4xl font-black tracking-tight sm:text-5xl", invert ? "text-white" : "text-zinc-950")}>{title}</h2>
+      {text && <p className={cn("mt-4 text-lg leading-8", invert ? "text-zinc-300" : "text-zinc-600")}>{text}</p>}
     </div>
   );
 }
@@ -849,33 +1057,33 @@ function DeliverablesSection() {
   const items = [
     {
       icon: LayoutTemplate,
-      title: "Custom website design",
-      text: "A structure based on your business goal, style and audience — not just a generic template.",
+      title: "A website structure that sells the offer",
+      text: "We decide what visitors need to see first, what proof they need and where every call-to-action belongs.",
     },
     {
-      icon: Smartphone,
-      title: "Mobile-first development",
-      text: "Your site is planned for phones first, then adapted for tablets and desktop.",
+      icon: MonitorSmartphone,
+      title: "Mobile-first design",
+      text: "Most customers will check you from their phone. The site is planned around fast scanning and easy taps.",
     },
     {
       icon: MousePointerClick,
-      title: "Conversion-focused flow",
-      text: "Clear calls-to-action, booking/contact paths, reviews, maps and trust-building sections.",
+      title: "Clear next steps",
+      text: "Booking, WhatsApp, calls, quote requests and contact forms are placed where people naturally need them.",
     },
     {
       icon: Search,
-      title: "Basic SEO setup",
-      text: "Search-friendly structure, page titles, descriptions, performance basics and clean content hierarchy.",
+      title: "Search-friendly basics",
+      text: "Clean titles, page structure, local details and content hierarchy so Google and customers understand the business.",
     },
     {
-      icon: BarChart3,
-      title: "Analytics setup",
-      text: "Google Analytics event tracking can be added so you see starts, submissions and CTA clicks.",
+      icon: PenTool,
+      title: "Copy polish",
+      text: "We turn rough notes into simple, confident website text that explains the offer without sounding robotic.",
     },
     {
       icon: Wrench,
-      title: "Maintenance",
-      text: "Monthly support for small changes, updates, fixes, improvements and ongoing care.",
+      title: "Launch and care",
+      text: "We help get the website online and can handle updates, small fixes and improvements after launch.",
     },
   ];
 
@@ -883,8 +1091,9 @@ function DeliverablesSection() {
     <section id="deliverables" className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
       <SectionHeader
         eyebrow="What we deliver"
-        title="A real website service, not a DIY builder."
-        text="The configurator helps define the project. The actual website is still designed, built and launched for the client."
+        title="A build-ready website plan, then the actual website."
+        text="The form is not the product. It simply turns messy ideas into a practical brief so the website can be designed and built with less guesswork."
+        icon={PackageCheck}
       />
       <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
         {items.map((item) => (
@@ -897,31 +1106,52 @@ function DeliverablesSection() {
 
 function FeatureCard({ icon: Icon, title, text }) {
   return (
-    <div className="rounded-[1.75rem] border border-zinc-200 bg-white p-6 shadow-lg shadow-zinc-200/50 transition hover:-translate-y-1 hover:shadow-xl">
-      <div className="mb-5 inline-flex rounded-2xl bg-zinc-950 p-3 text-white">
-        <Icon className="h-5 w-5" />
+    <div className="group relative overflow-hidden rounded-[1.75rem] border border-zinc-200 bg-white p-6 shadow-lg shadow-zinc-200/50 transition hover:-translate-y-1 hover:border-zinc-300 hover:shadow-xl">
+      <div className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-amber-300 via-teal-300 to-rose-300" />
+      <div className="mb-5 flex items-center gap-3">
+        <span className="rounded-2xl bg-zinc-950 p-3 text-white shadow-lg shadow-zinc-950/10">
+          <Icon className="h-5 w-5" />
+        </span>
+        <h3 className="text-xl font-black leading-tight text-zinc-950">{title}</h3>
       </div>
-      <h3 className="text-xl font-semibold text-zinc-950">{title}</h3>
       <p className="mt-3 leading-7 text-zinc-600">{text}</p>
     </div>
   );
 }
 
 function WhoWeHelpSection() {
-  const groups = ["Barbers & salons", "Tattoo artists", "Restaurants & cafés", "Local services", "Coaches & consultants", "Artists & portfolios"];
+  const groups = [
+    { label: "Barbers", note: "Booking, prices, reviews", icon: Scissors },
+    { label: "Salons", note: "Services, style, booking", icon: Sparkles },
+    { label: "Restaurants", note: "Menu, location, contact", icon: UtensilsCrossed },
+    { label: "Local services", note: "Trust, areas, quick quotes", icon: Hammer },
+    { label: "Coaches", note: "Offer, proof, consultation", icon: Handshake },
+    { label: "Portfolios", note: "Projects, story, enquiries", icon: Camera },
+  ];
+
   return (
     <section className="bg-zinc-950 py-20 text-white">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <SectionHeader
           eyebrow="Who it is for"
-          title="Built for businesses that need clarity before design."
-          text="The system works best when the client knows they need a better website but does not know exactly how to structure it."
+          title="For people who know they need a better site, but not the web jargon."
+          text="The flow works best for small businesses, solo experts and local teams that need a polished website without turning the planning into homework."
+          icon={Handshake}
+          invert
         />
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {groups.map((group) => (
-            <div key={group} className="rounded-3xl border border-white/10 bg-white/5 p-5">
-              <Check className="mb-3 h-5 w-5 text-zinc-300" />
-              <p className="font-medium">{group}</p>
+            <div key={group.label} className="rounded-3xl border border-white/10 bg-white/[0.06] p-5 transition hover:bg-white/[0.09]">
+              <div className="flex items-center gap-3">
+                <span className="rounded-2xl bg-white/10 p-3 text-amber-200">
+                  <group.icon className="h-5 w-5" />
+                </span>
+                <div className="min-w-0">
+                  <p className="font-black">{group.label}</p>
+                  <p className="mt-1 text-sm text-zinc-400">{group.note}</p>
+                </div>
+                <Check className="ml-auto h-5 w-5 shrink-0 text-teal-200" />
+              </div>
             </div>
           ))}
         </div>
@@ -934,9 +1164,10 @@ function PortfolioSection() {
   return (
     <section id="portfolio" className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
       <SectionHeader
-        eyebrow="Concept portfolio"
-        title="Show the kind of websites people can get."
-        text="These can be concept directions first. Later you can replace them with real client projects."
+        eyebrow="Featured work examples"
+        title="Show visitors what is possible before they fill out the form."
+        text="These example directions make the offer more concrete: different businesses, different goals, different website structures."
+        icon={Images}
       />
       <div className="grid gap-6 lg:grid-cols-2">
         {PORTFOLIO_CONCEPTS.map((concept) => (
@@ -949,32 +1180,42 @@ function PortfolioSection() {
 
 function ConceptCard({ concept }) {
   return (
-    <div className="overflow-hidden rounded-[2rem] border border-zinc-200 bg-white shadow-xl shadow-zinc-200/60">
+    <div className="overflow-hidden rounded-[2rem] border border-zinc-200 bg-white shadow-xl shadow-zinc-200/60 transition hover:-translate-y-1 hover:shadow-2xl">
       <div
-        className="min-h-64 p-6 text-white"
+        className="min-h-72 p-6 text-white"
         style={{ background: `linear-gradient(135deg, ${concept.palette[0]}, ${concept.palette[1]})` }}
       >
-        <div className="mb-12 flex items-start justify-between gap-4">
+        <div className="mb-8 flex items-start justify-between gap-4">
           <div>
-            <p className="text-sm text-white/70">{concept.type}</p>
-            <h3 className="mt-2 max-w-md text-3xl font-semibold tracking-tight">{concept.title}</h3>
+            <p className="inline-flex rounded-full bg-white/15 px-3 py-1 text-xs font-bold text-white">{concept.status}</p>
+            <h3 className="mt-4 max-w-md text-3xl font-black tracking-tight">{concept.title}</h3>
+            <p className="mt-2 text-sm font-medium text-white/75">{concept.type}</p>
           </div>
-          <div className="flex -space-x-2">
-            {concept.palette.map((color) => (
-              <span key={color} className="h-8 w-8 rounded-full border-2 border-white" style={{ backgroundColor: color }} />
-            ))}
+          <div className="rounded-2xl bg-white/15 p-3">
+            <concept.icon className="h-6 w-6" />
           </div>
         </div>
-        <div className="grid gap-2 sm:grid-cols-2">
-          {concept.sections.map((section) => (
-            <span key={section} className="rounded-full bg-white/15 px-3 py-2 text-sm font-medium text-white">
-              {section}
-            </span>
-          ))}
+        <div className="rounded-3xl border border-white/15 bg-black/15 p-4">
+          <p className="text-sm font-bold text-amber-100">{concept.outcome}</p>
+          <div className="mt-4 grid gap-2 sm:grid-cols-2">
+            {concept.sections.map((section) => (
+              <span key={section} className="rounded-full bg-white/15 px-3 py-2 text-sm font-bold text-white">
+                {section}
+              </span>
+            ))}
+          </div>
         </div>
       </div>
       <div className="p-6">
         <p className="leading-7 text-zinc-600">{concept.description}</p>
+        <div className="mt-5 grid gap-2">
+          {concept.highlights.map((highlight) => (
+            <div key={highlight} className="flex items-center gap-3 rounded-2xl bg-zinc-50 p-3 text-sm font-bold text-zinc-800">
+              <Check className="h-4 w-4 text-teal-600" />
+              {highlight}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -986,8 +1227,9 @@ function PackagesSection({ onStart }) {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <SectionHeader
           eyebrow="Packages"
-          title="Clear package caps. Recommendation after the brief."
-          text="People see the maximum package prices before the configurator. The configurator uses complexity to recommend Basic, Advanced or Premium without pushing the price above the cap."
+          title="Simple packages, clearer expectations."
+          text="Visitors can see the rough price range first. The configurator then recommends the package that fits their goals, features and content readiness."
+          icon={BadgeEuro}
         />
         <div className="grid gap-6 lg:grid-cols-3">
           {Object.values(PACKAGES).map((pack) => (
@@ -1006,10 +1248,10 @@ function PackageHomeCard({ pack, featured, onStart }) {
         <span className={cn("rounded-full px-3 py-1 text-xs font-medium", featured ? "bg-white text-zinc-950" : "bg-zinc-100 text-zinc-600")}>{pack.badge}</span>
         {featured && <Star className="h-5 w-5" />}
       </div>
-      <h3 className="text-2xl font-semibold">{pack.name}</h3>
+      <h3 className="text-2xl font-black">{pack.name}</h3>
       <p className={cn("mt-3 leading-7", featured ? "text-zinc-300" : "text-zinc-600")}>{pack.description}</p>
       <p className="mt-6 text-sm uppercase tracking-wide opacity-70">From</p>
-      <p className="mt-1 text-4xl font-semibold">€{pack.base}</p>
+      <p className="mt-1 text-4xl font-black">€{pack.base}</p>
       <p className={cn("mt-1 text-sm", featured ? "text-zinc-300" : "text-zinc-500")}>Max €{pack.max}</p>
       <p className={cn("mt-1 text-sm", featured ? "text-zinc-300" : "text-zinc-500")}>Maintenance from €{pack.monthly}/month</p>
       <ul className="mt-6 space-y-3">
@@ -1030,19 +1272,20 @@ function ProcessSection() {
     <section id="process" className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
       <SectionHeader
         eyebrow="Process"
-        title="From unclear idea to build-ready website brief."
-        text="The point is not to make clients do your job. The point is to collect better information before the project starts."
+        title="From unclear idea to website that can be built."
+        text="The client answers practical questions. You get a focused plan for content, design, sections, features and next steps."
+        icon={Compass}
       />
       <div className="grid gap-5 lg:grid-cols-4">
         {PROCESS_STEPS.map((item, index) => (
           <div key={item.title} className="rounded-[1.75rem] border border-zinc-200 bg-white p-6 shadow-lg shadow-zinc-200/50">
-            <div className="mb-5 flex items-center justify-between">
+            <div className="mb-5 flex items-center gap-3">
               <div className="rounded-2xl bg-zinc-950 p-3 text-white">
                 <item.icon className="h-5 w-5" />
               </div>
-              <span className="text-sm font-semibold text-zinc-400">0{index + 1}</span>
+              <span className="ml-auto text-sm font-black text-zinc-400">0{index + 1}</span>
             </div>
-            <h3 className="text-lg font-semibold">{item.title}</h3>
+            <h3 className="text-lg font-black">{item.title}</h3>
             <p className="mt-3 leading-7 text-zinc-600">{item.description}</p>
           </div>
         ))}
@@ -1051,21 +1294,57 @@ function ProcessSection() {
   );
 }
 
-function AnalyticsValueSection() {
+function PlainLanguageSection() {
+  const translations = [
+    {
+      icon: MessageSquareText,
+      client: "I want more people to contact me.",
+      plan: "We make the offer, proof and contact buttons easier to find.",
+    },
+    {
+      icon: Camera,
+      client: "My work looks better than my current site.",
+      plan: "We build around photos, examples, reviews and a more premium visual direction.",
+    },
+    {
+      icon: FileQuestion,
+      client: "I do not know what pages I need.",
+      plan: "We recommend the right sections based on the business type and goal.",
+    },
+    {
+      icon: ClipboardCheck,
+      client: "I need a quote, but I am not technical.",
+      plan: "We turn your answers into a clear brief, package and next step.",
+    },
+  ];
+
   return (
-    <section className="bg-zinc-950 py-20 text-white">
-      <div className="mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-[0.8fr_1.2fr] lg:px-8">
+    <section className="bg-white py-20">
+      <div className="mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-[0.82fr_1.18fr] lg:px-8">
         <div>
-          <p className="mb-3 text-sm font-semibold uppercase tracking-[0.2em] text-zinc-400">Tracking-ready</p>
-          <h2 className="text-3xl font-semibold tracking-tight sm:text-5xl">Analytics tells you where people drop off.</h2>
-          <p className="mt-5 leading-8 text-zinc-300">
-            The MVP includes Google Analytics helper functions and event tracking placeholders for configurator starts, step completions, package views and CTA clicks.
+          <SectionHeader
+            eyebrow="No-tech translation"
+            title="Clients say what they mean. The form turns it into website decisions."
+            text="The configurator uses practical questions small business owners actually recognize."
+            icon={MessageSquareText}
+            align="left"
+          />
+          <p className="rounded-3xl border border-zinc-200 bg-zinc-50 p-5 leading-8 text-zinc-700">
+            The goal is fewer "what does this mean?" moments: clear labels, concrete examples and choices that sound like real business problems.
           </p>
         </div>
-        <div className="grid gap-3 sm:grid-cols-2">
-          {["start_configurator", "step_completed", "design_direction_selected", "package_recommended", "lead_submitted", "deposit_clicked"].map((event) => (
-            <div key={event} className="rounded-2xl border border-white/10 bg-white/5 p-4 font-mono text-sm text-zinc-200">
-              {event}
+        <div className="grid gap-4">
+          {translations.map((item) => (
+            <div key={item.client} className="rounded-3xl border border-zinc-200 bg-zinc-50 p-5">
+              <div className="flex items-start gap-4">
+                <span className="rounded-2xl bg-zinc-950 p-3 text-white">
+                  <item.icon className="h-5 w-5" />
+                </span>
+                <div>
+                  <p className="font-black text-zinc-950">{item.client}</p>
+                  <p className="mt-2 leading-7 text-zinc-600">{item.plan}</p>
+                </div>
+              </div>
             </div>
           ))}
         </div>
@@ -1076,15 +1355,20 @@ function AnalyticsValueSection() {
 
 function FAQSection() {
   const faqs = [
-    ["Is this a website builder?", "No. The configurator helps define the website. The website is then built as a service."],
-    ["Do clients see the price immediately?", "They see starting package prices on the homepage. The more accurate estimate appears after scope, design and content questions."],
-    ["Can clients change colors?", "Yes. The design step lets them adjust primary, accent and background colors and leave notes."],
-    ["Can this collect leads later?", "Yes. The current version is front-end only. The next version can connect to Supabase, email automation and payment links."],
+    ["Is this a website builder?", "No. You use the form to explain what you need. QuickWeb Studio uses that plan to design, build and launch the website for you."],
+    ["Can you improve my current website?", "Yes. Choose \"Improve my current website\" at the start. We can keep what works and rethink the parts that feel outdated, unclear or hard to use."],
+    ["Can you build a completely new website?", "Yes. Choose \"Build a completely new website\" if you need a fresh start, a first website or a replacement for an old site."],
+    ["What if I do not know which pages I need?", "That is exactly what the questions are for. Your business type and goals help suggest useful sections like services, reviews, booking, FAQ, gallery or location."],
+    ["Do I need all my text and photos ready?", "No. It helps, but it is not required. The form asks what you already have so we can include copy, image selection or content help in the scope."],
+    ["Can people book, call or message me through the site?", "Yes. You can select booking, WhatsApp, contact forms, maps, payment links and other practical features during the configurator."],
+    ["Will the website work well on phones?", "Yes. The design is planned mobile-first because most local customers will visit from their phone before they call, book or message."],
+    ["Do I have to pay immediately?", "No. At the end you can choose a deposit, a short consultation or just send the brief first."],
+    ["How long does it take?", "Simple websites can often be planned and built faster. Bigger projects with booking, payments, multiple languages or lots of content need more time."],
   ];
 
   return (
     <section id="faq" className="mx-auto max-w-4xl px-4 py-20 sm:px-6 lg:px-8">
-      <SectionHeader eyebrow="FAQ" title="Questions clients may ask." />
+      <SectionHeader eyebrow="FAQ" title="Practical questions, plain answers." icon={FileQuestion} />
       <div className="space-y-3">
         {faqs.map(([question, answer]) => (
           <details key={question} className="group rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm">
@@ -1107,8 +1391,8 @@ function FinalCTA({ onStart }) {
         <div className="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-center">
           <div>
             <p className="mb-3 text-sm font-semibold uppercase tracking-[0.2em] text-zinc-400">Start now</p>
-            <h2 className="max-w-3xl text-3xl font-semibold tracking-tight sm:text-5xl">Create a website plan before asking for a quote.</h2>
-            <p className="mt-4 max-w-2xl leading-8 text-zinc-300">A better brief means a better website, cleaner pricing and fewer confusing back-and-forth messages.</p>
+            <h2 className="max-w-3xl text-3xl font-black tracking-tight sm:text-5xl">Start with a clear website plan, not a vague quote request.</h2>
+            <p className="mt-4 max-w-2xl leading-8 text-zinc-300">A better brief means stronger copy, cleaner pricing and fewer confusing back-and-forth messages.</p>
           </div>
           <button onClick={onStart} className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-6 py-4 font-medium text-zinc-950 transition hover:bg-zinc-100">
             Start website plan <ArrowRight className="h-4 w-4" />
@@ -1195,7 +1479,7 @@ function ConfiguratorPage({ onBackHome }) {
 
   const leadComplete = answers.lead.name && answers.lead.email && answers.lead.businessName;
   const canContinue =
-    (step === 0 && answers.businessType) ||
+    (step === 0 && answers.projectMode && answers.businessType) ||
     (step === 1 && answers.goals.length > 0) ||
     (step === 2 && answers.style) ||
     (step === 3 && answers.sections.length >= 3) ||
@@ -1216,6 +1500,7 @@ Name: ${answers.lead.name}
 Email: ${answers.lead.email}
 Phone: ${answers.lead.phone}
 
+Starting point: ${answers.projectMode}
 Business type: ${answers.businessType}
 Goals: ${answers.goals.join(", ")}
 Style: ${answers.style}
@@ -1242,7 +1527,7 @@ Package: ${answers.notes.package}`
   );
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,#f4f4f5,transparent_30%),linear-gradient(to_bottom,#ffffff,#f4f4f5)] text-zinc-950">
+    <div className="min-h-screen bg-[linear-gradient(180deg,#fffdf7_0%,#eef7f6_48%,#f7f7fb_100%)] text-zinc-950">
       <BriefDocument answers={answers} result={result} />
 
       <header className="border-b border-zinc-200 bg-white/80 backdrop-blur">
@@ -1262,18 +1547,18 @@ Package: ${answers.notes.package}`
             <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
               <div>
                 <p className="mb-3 inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-sm text-zinc-200">
-                  <Zap className="h-4 w-4" /> Website plan in 3 minutes
+                  <Zap className="h-4 w-4" /> Website plan in plain English
                 </p>
-                <h1 className="max-w-3xl text-3xl font-semibold tracking-tight sm:text-5xl">
-                  Define the website first. Then build it properly.
+                <h1 className="max-w-3xl text-3xl font-black tracking-tight sm:text-5xl">
+                  Shape the website around the business goal, not a blank template.
                 </h1>
                 <p className="mt-4 max-w-2xl text-zinc-300">
-                  Choose your business type, goal, style, sections, features and notes. The system creates a recommended package, probable website version and brief.
+                  Choose the starting point, business type, outcomes, style, sections, features and content readiness. The result is a clear package recommendation and brief.
                 </p>
               </div>
               <div className="rounded-3xl bg-white/10 p-4 text-sm text-zinc-200 md:w-72">
-                <p className="font-medium text-white">Price logic</p>
-                <p className="mt-1">The accurate estimate appears after design direction and package comparison, not too early.</p>
+                <p className="font-bold text-white">Less guessing</p>
+                <p className="mt-1">The estimate appears after the important choices are clear, so the price feels easier to understand.</p>
               </div>
             </div>
           </div>
@@ -1283,8 +1568,30 @@ Package: ${answers.notes.package}`
           <AnimatePresence mode="wait">
             <StepShell step={step}>
               {step === 0 && (
-                <div className="space-y-5">
-                  <div className="grid gap-3 sm:grid-cols-2">
+                <div className="space-y-7">
+                  <div>
+                    <div className="mb-3 flex items-center gap-2">
+                      <Rocket className="h-5 w-5 text-zinc-700" />
+                      <h3 className="text-lg font-black text-zinc-950">What are we starting from?</h3>
+                    </div>
+                    <div className="grid gap-4 lg:grid-cols-2">
+                      {PROJECT_MODES.map((mode) => (
+                        <ProjectModeCard
+                          key={mode.value}
+                          mode={mode}
+                          selected={answers.projectMode === mode.value}
+                          onSelect={() => update({ projectMode: mode.value })}
+                        />
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <div className="mb-3 flex items-center gap-2">
+                      <Building2 className="h-5 w-5 text-zinc-700" />
+                      <h3 className="text-lg font-black text-zinc-950">Who is the website for?</h3>
+                    </div>
+                    <div className="grid gap-3 sm:grid-cols-2">
                     {BUSINESS_TYPES.map((type) => (
                       <OptionButton
                         key={type}
@@ -1293,11 +1600,13 @@ Package: ${answers.notes.package}`
                           update({ businessType: type });
                           trackEvent("business_type_selected", { business_type: type });
                         }}
-                        icon={Building2}
+                        icon={getBusinessTypeMeta(type).icon}
+                        description={getBusinessTypeMeta(type).description}
                       >
                         {type}
                       </OptionButton>
                     ))}
+                    </div>
                   </div>
                   <NotesBox
                     label="Tell us more about the business"
@@ -1310,19 +1619,23 @@ Package: ${answers.notes.package}`
 
               {step === 1 && (
                 <div className="space-y-5">
-                  <div className="rounded-2xl bg-zinc-100 p-4 text-sm text-zinc-600">
-                    Choose one or more. A website for bookings should be structured differently from a portfolio or webshop.
+                  <div className="rounded-[1.5rem] border border-amber-200 bg-amber-50 p-5">
+                    <div className="flex items-start gap-3">
+                      <Goal className="mt-1 h-5 w-5 text-amber-700" />
+                      <div>
+                        <p className="font-black text-zinc-950">Pick the outcomes that would make the website worth it.</p>
+                        <p className="mt-1 text-sm leading-6 text-zinc-700">A booking site, portfolio, shop and credibility site should not be structured the same way.</p>
+                      </div>
+                    </div>
                   </div>
                   <div className="grid gap-3 sm:grid-cols-2">
                     {WEBSITE_GOALS.map((goal) => (
-                      <OptionButton
+                      <GoalOption
                         key={goal.label}
+                        goal={goal}
                         selected={answers.goals.includes(goal.label)}
                         onClick={() => update({ goals: toggleArrayValue(answers.goals, goal.label) })}
-                        icon={Target}
-                      >
-                        {goal.label}
-                      </OptionButton>
+                      />
                     ))}
                   </div>
                   <NotesBox
@@ -1394,7 +1707,7 @@ Package: ${answers.notes.package}`
                         key={section.label}
                         selected={answers.sections.includes(section.label)}
                         onClick={() => update({ sections: toggleArrayValue(answers.sections, section.label) })}
-                        icon={Layers}
+                        icon={getSectionIcon(section.label)}
                         description={section.recommended ? "Usually recommended" : "Optional / scope-dependent"}
                       >
                         {section.label}
@@ -1423,7 +1736,7 @@ Package: ${answers.notes.package}`
                         selected={answers.functionality.includes(feature.label)}
                         onClick={() => update({ functionality: toggleArrayValue(answers.functionality, feature.label) })}
                         icon={feature.icon}
-                        description={`Complexity value €${feature.price} · ${feature.complexity}`}
+                        description={`Build effort: ${feature.complexity} · from €${feature.price}`}
                       >
                         {feature.label}
                       </OptionButton>
@@ -1444,31 +1757,12 @@ Package: ${answers.notes.package}`
                     Missing content does not block the project, but it affects difficulty, timeline and price.
                   </div>
                   {CONTENT_ITEMS.map((item) => (
-                    <div key={item.key} className="rounded-2xl border border-zinc-200 p-4">
-                      <div className="mb-3 flex items-center justify-between gap-4">
-                        <div>
-                          <p className="font-medium text-zinc-950">{item.label}</p>
-                          <p className="text-sm text-zinc-500">If missing, planning/support may add from €{item.missingPrice}.</p>
-                        </div>
-                      </div>
-                      <div className="grid gap-2 sm:grid-cols-3">
-                        {["yes", "no", "unknown"].map((value) => (
-                          <button
-                            key={value}
-                            type="button"
-                            onClick={() => updateContentReady(item.key, value)}
-                            className={cn(
-                              "rounded-xl border px-4 py-2 text-sm font-medium capitalize transition",
-                              answers.contentReady[item.key] === value
-                                ? "border-zinc-950 bg-zinc-950 text-white"
-                                : "border-zinc-200 hover:bg-zinc-50"
-                            )}
-                          >
-                            {value === "yes" ? "Ready" : value === "no" ? "Not ready" : "Not sure"}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
+                    <ContentReadyCard
+                      key={item.key}
+                      item={item}
+                      value={answers.contentReady[item.key]}
+                      onChange={(value) => updateContentReady(item.key, value)}
+                    />
                   ))}
                   <NotesBox
                     label="What content do you already have?"
@@ -1537,7 +1831,7 @@ Package: ${answers.notes.package}`
                 <div className="space-y-6">
                   <div className="rounded-[1.75rem] bg-zinc-950 p-6 text-white">
                     <p className="mb-2 inline-flex rounded-full bg-white/10 px-3 py-1 text-sm text-zinc-200">Recommended for you</p>
-                    <h3 className="text-3xl font-semibold">{result.package.name}</h3>
+                    <h3 className="text-3xl font-black">{result.package.name}</h3>
                     <p className="mt-3 max-w-2xl text-zinc-300">{result.package.description}</p>
                     <div className="mt-6 grid gap-4 sm:grid-cols-3">
                       <MetricCard label="Package cap" value={`€${result.estimatedPrice.toLocaleString("nl-NL")}`} />
@@ -1664,7 +1958,7 @@ Package: ${answers.notes.package}`
                     <div className="mb-4 inline-flex rounded-full bg-white/10 p-3">
                       <Check className="h-6 w-6" />
                     </div>
-                    <h3 className="text-3xl font-semibold">Your website brief is ready.</h3>
+                    <h3 className="text-3xl font-black">Your website brief is ready.</h3>
                     <p className="mt-3 max-w-2xl text-zinc-300">
                       The client can now receive the brief, save it as a PDF, pay a deposit, or book a consultation.
                     </p>
@@ -1754,7 +2048,114 @@ function MetricCard({ label, value }) {
   return (
     <div className="rounded-2xl bg-white/10 p-4">
       <p className="text-xs uppercase tracking-wide text-zinc-400">{label}</p>
-      <p className="mt-1 text-2xl font-semibold">{value}</p>
+      <p className="mt-1 text-2xl font-black">{value}</p>
+    </div>
+  );
+}
+
+function ProjectModeCard({ mode, selected, onSelect }) {
+  const Icon = mode.icon;
+
+  return (
+    <button
+      type="button"
+      onClick={onSelect}
+      className={cn(
+        "relative overflow-hidden rounded-[1.75rem] border p-5 text-left transition-all",
+        selected
+          ? "border-zinc-950 bg-zinc-950 text-white shadow-xl shadow-zinc-950/20"
+          : "border-zinc-200 bg-white hover:-translate-y-0.5 hover:border-zinc-400 hover:shadow-lg"
+      )}
+    >
+      <div className={cn("absolute inset-x-0 top-0 h-1.5", selected ? "bg-amber-300" : "bg-gradient-to-r from-amber-300 via-teal-300 to-rose-300")} />
+      <div className="flex items-start gap-4">
+        <span className={cn("rounded-2xl p-3", selected ? "bg-white/10 text-amber-200" : "bg-zinc-950 text-white")}>
+          <Icon className="h-6 w-6" />
+        </span>
+        <div className="min-w-0">
+          <p className={cn("text-xs font-black uppercase tracking-[0.18em]", selected ? "text-zinc-300" : "text-zinc-500")}>{mode.eyebrow}</p>
+          <h4 className="mt-2 text-2xl font-black leading-tight">{mode.label}</h4>
+          <p className={cn("mt-3 leading-7", selected ? "text-zinc-300" : "text-zinc-600")}>{mode.description}</p>
+        </div>
+      </div>
+      <div className="mt-5 grid gap-2">
+        {mode.points.map((point) => (
+          <span key={point} className={cn("flex items-center gap-2 text-sm font-bold", selected ? "text-zinc-200" : "text-zinc-700")}>
+            <Check className="h-4 w-4 text-teal-500" />
+            {point}
+          </span>
+        ))}
+      </div>
+      {selected && <span className="mt-5 inline-flex items-center gap-2 rounded-full bg-white px-3 py-2 text-xs font-black text-zinc-950"><Check className="h-3 w-3" /> Selected</span>}
+    </button>
+  );
+}
+
+function GoalOption({ goal, selected, onClick }) {
+  const meta = getGoalMeta(goal.label);
+  const Icon = meta.icon;
+
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={cn(
+        "group rounded-[1.5rem] border p-5 text-left transition-all",
+        selected
+          ? "border-zinc-950 bg-zinc-950 text-white shadow-xl shadow-zinc-950/15"
+          : "border-zinc-200 bg-white hover:-translate-y-0.5 hover:border-zinc-400 hover:shadow-lg"
+      )}
+    >
+      <div className="flex items-start gap-4">
+        <span className={cn("rounded-2xl p-3", selected ? "bg-white/10 text-amber-200" : "bg-zinc-100 text-zinc-800 group-hover:bg-amber-50")}>
+          <Icon className="h-5 w-5" />
+        </span>
+        <div className="min-w-0">
+          <div className="flex items-center gap-2">
+            <h4 className="font-black">{goal.label}</h4>
+            {selected && <Check className="h-4 w-4" />}
+          </div>
+          <p className={cn("mt-2 text-sm leading-6", selected ? "text-zinc-300" : "text-zinc-600")}>{meta.description}</p>
+        </div>
+      </div>
+      <p className={cn("mt-4 inline-flex rounded-full px-3 py-1 text-xs font-black", selected ? "bg-white text-zinc-950" : "bg-teal-50 text-teal-700")}>
+        {meta.outcome}
+      </p>
+    </button>
+  );
+}
+
+function ContentReadyCard({ item, value, onChange }) {
+  const Icon = getContentIcon(item.key);
+
+  return (
+    <div className="rounded-2xl border border-zinc-200 bg-white p-4">
+      <div className="mb-4 flex items-start gap-3">
+        <span className="rounded-2xl bg-zinc-100 p-3 text-zinc-800">
+          <Icon className="h-5 w-5" />
+        </span>
+        <div>
+          <p className="font-black text-zinc-950">{item.label}</p>
+          <p className="mt-1 text-sm text-zinc-500">If missing, planning/support may add from €{item.missingPrice}.</p>
+        </div>
+      </div>
+      <div className="grid gap-2 sm:grid-cols-3">
+        {["yes", "no", "unknown"].map((option) => (
+          <button
+            key={option}
+            type="button"
+            onClick={() => onChange(option)}
+            className={cn(
+              "rounded-xl border px-4 py-2 text-sm font-bold capitalize transition",
+              value === option
+                ? "border-zinc-950 bg-zinc-950 text-white"
+                : "border-zinc-200 hover:bg-zinc-50"
+            )}
+          >
+            {option === "yes" ? "Ready" : option === "no" ? "Not ready" : "Not sure"}
+          </button>
+        ))}
+      </div>
     </div>
   );
 }
@@ -1775,15 +2176,15 @@ function OptionButton({ selected, children, onClick, icon: Icon, description }) 
         {Icon && (
           <div
             className={cn(
-              "mt-0.5 rounded-xl p-2",
-              selected ? "bg-white/10" : "bg-zinc-100 group-hover:bg-zinc-200"
+              "mt-0.5 rounded-xl p-2.5",
+              selected ? "bg-white/10" : "bg-zinc-100 group-hover:bg-amber-50"
             )}
           >
             <Icon className="h-4 w-4" />
           </div>
         )}
         <div className="min-w-0">
-          <div className="flex items-center gap-2 font-medium">
+          <div className="flex items-center gap-2 font-bold">
             {children}
             {selected && <Check className="h-4 w-4" />}
           </div>
@@ -1807,14 +2208,16 @@ function StepShell({ step, children }) {
       transition={{ duration: 0.22 }}
       className="rounded-[2rem] border border-zinc-200 bg-white p-5 shadow-xl shadow-zinc-200/60 sm:p-8"
     >
-      <div className="mb-7 flex items-start gap-4">
-        <div className="rounded-2xl bg-zinc-950 p-3 text-white">
-          <Icon className="h-5 w-5" />
-        </div>
-        <div>
-          <p className="text-sm font-medium text-zinc-500">Step {step + 1} of {steps.length}</p>
-          <h2 className="mt-1 text-2xl font-semibold tracking-tight text-zinc-950 sm:text-3xl">{steps[step].title}</h2>
-          <p className="mt-2 max-w-2xl text-zinc-600">{steps[step].subtitle}</p>
+      <div className="mb-7 rounded-[1.75rem] border border-zinc-200 bg-zinc-50 p-4 sm:p-5">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+          <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-zinc-950 text-white shadow-lg shadow-zinc-950/15">
+            <Icon className="h-7 w-7" />
+          </div>
+          <div className="min-w-0">
+            <p className="text-sm font-bold text-zinc-500">Step {step + 1} of {steps.length}</p>
+            <h2 className="mt-1 text-3xl font-black tracking-tight text-zinc-950 sm:text-4xl">{steps[step].title}</h2>
+            <p className="mt-2 max-w-2xl leading-7 text-zinc-600">{steps[step].subtitle}</p>
+          </div>
         </div>
       </div>
       {children}
@@ -1832,7 +2235,7 @@ function Progress({ currentStep }) {
       </div>
       <div className="h-2 overflow-hidden rounded-full bg-zinc-200">
         <motion.div
-          className="h-full rounded-full bg-zinc-950"
+          className="h-full rounded-full bg-gradient-to-r from-zinc-950 via-teal-700 to-amber-500"
           initial={false}
           animate={{ width: `${percent}%` }}
           transition={{ duration: 0.25 }}
@@ -1850,6 +2253,7 @@ function MiniBrief({ answers, result, showPrice = false }) {
         <h3 className="font-semibold text-zinc-950">Live brief</h3>
       </div>
       <div className="space-y-4 text-sm">
+        <BriefLine label="Starting point" value={answers.projectMode || "Not selected yet"} />
         <BriefLine label="Business" value={answers.businessType || "Not selected yet"} />
         <BriefLine label="Goal" value={answers.goals.length ? answers.goals.join(", ") : "Not selected yet"} />
         <BriefLine label="Style" value={answers.style || "Not selected yet"} />
@@ -1960,7 +2364,7 @@ function DesignCard({ direction, selected, onSelect }) {
         <div className="mb-4 flex items-center justify-between gap-3">
           <div>
             <p className="text-xs font-medium uppercase tracking-wide text-zinc-400">{direction.tag}</p>
-            <h3 className="mt-1 text-xl font-semibold text-zinc-950">{direction.name}</h3>
+            <h3 className="mt-1 text-xl font-black text-zinc-950">{direction.name}</h3>
           </div>
           <div className="flex -space-x-2">
             {direction.palette.map((color) => (
@@ -1976,7 +2380,7 @@ function DesignCard({ direction, selected, onSelect }) {
           <div className="relative z-10 flex min-h-44 flex-col justify-between">
             <div>
               <p className="mb-3 inline-flex rounded-full bg-white/15 px-3 py-1 text-xs">Concept preview</p>
-              <h4 className="max-w-xs text-2xl font-semibold leading-tight">{direction.headline}</h4>
+              <h4 className="max-w-xs text-2xl font-black leading-tight">{direction.headline}</h4>
               <p className="mt-3 max-w-sm text-sm text-white/75">{direction.description}</p>
             </div>
             <div className="mt-5 flex flex-wrap gap-2">
@@ -2002,10 +2406,10 @@ function PackageComparisonCard({ pack, answers, result, recommended }) {
         <span className={cn("rounded-full px-3 py-1 text-xs font-medium", recommended ? "bg-white text-zinc-950" : "bg-zinc-100 text-zinc-600")}>{recommended ? "Recommended" : pack.badge}</span>
         {recommended && <Check className="h-5 w-5" />}
       </div>
-      <h3 className="text-xl font-semibold">{pack.name}</h3>
+      <h3 className="text-xl font-black">{pack.name}</h3>
       <p className={cn("mt-2 text-sm leading-6", recommended ? "text-zinc-300" : "text-zinc-600")}>{pack.bestFor}</p>
       <p className="mt-5 text-sm uppercase tracking-wide opacity-70">Estimated with your scope</p>
-      <p className="mt-1 text-3xl font-semibold">€{estimate.toLocaleString("nl-NL")}</p>
+      <p className="mt-1 text-3xl font-black">€{estimate.toLocaleString("nl-NL")}</p>
       <p className={cn("mt-1 text-sm", recommended ? "text-zinc-300" : "text-zinc-500")}>Maintenance from €{pack.monthly}/month</p>
       <div className={cn("mt-5 rounded-2xl p-4", recommended ? "bg-white/10" : "bg-zinc-100")}> 
         <p className="mb-3 text-sm font-semibold">Probable website version</p>
@@ -2055,7 +2459,7 @@ function SelectedDesignPreview({ result }) {
         style={{ background: `linear-gradient(135deg, ${direction.palette[0]}, ${direction.palette[1]})` }}
       >
         <p className="mb-4 inline-flex rounded-full bg-white/15 px-3 py-1 text-sm">{direction.name}</p>
-        <h4 className="max-w-sm text-3xl font-semibold tracking-tight">{direction.headline}</h4>
+        <h4 className="max-w-sm text-3xl font-black tracking-tight">{direction.headline}</h4>
         <p className="mt-4 max-w-md leading-7 text-white/75">{direction.description}</p>
         <div className="mt-8 grid gap-3">
           <div className="h-16 rounded-2xl bg-white/15" />
@@ -2095,6 +2499,7 @@ function BriefDocument({ answers, result }) {
             <p>Lead score: {result.leadScore}/100</p>
           </PrintSection>
           <PrintSection title="Website direction">
+            <p>Starting point: {answers.projectMode || "—"}</p>
             <p>Business type: {answers.businessType}</p>
             <p>Goals: {answers.goals.join(", ")}</p>
             <p>Style: {answers.style}</p>
