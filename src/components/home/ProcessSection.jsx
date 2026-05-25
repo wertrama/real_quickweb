@@ -13,15 +13,15 @@ export function ProcessSection() {
       />
       <div className="grid gap-5 lg:grid-cols-3">
         {PROCESS_STEPS.map((item, index) => (
-          <div key={item.title} className="rounded-[1.75rem] border border-zinc-200 bg-white p-6 shadow-lg shadow-zinc-200/50">
-            <div className="mb-5 flex items-center gap-3">
-              <div className="rounded-2xl bg-zinc-950 p-3 text-white">
-                <item.icon className="h-5 w-5" />
+          <div key={item.title} className="rounded-[2rem] border border-[var(--border)] bg-white p-8 shadow-lg shadow-black/5">
+            <div className="mb-6 flex items-center gap-4">
+              <div className="rounded-2xl bg-[var(--primary-soft)] p-4 text-[var(--primary)]">
+                <item.icon className="h-7 w-7" />
               </div>
-              <span className="ml-auto text-sm font-black text-zinc-400">0{index + 1}</span>
+              <span className="ml-auto text-lg font-black text-[var(--primary)]">0{index + 1}</span>
             </div>
-            <h3 className="text-lg font-black">{item.title}</h3>
-            <p className="mt-3 leading-7 text-zinc-600">{item.description}</p>
+            <h3 className="text-2xl font-extrabold leading-tight text-[var(--text-main)]">{item.title}</h3>
+            <p className="mt-4 text-lg leading-8 text-[var(--text-muted)]">{item.description}</p>
           </div>
         ))}
       </div>

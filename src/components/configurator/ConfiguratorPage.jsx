@@ -169,15 +169,15 @@ Package: ${answers.notes.package}`
   );
 
   return (
-    <div className="min-h-screen bg-[linear-gradient(180deg,#fffdf7_0%,#eef7f6_48%,#f7f7fb_100%)] text-zinc-950">
+    <div className="min-h-screen bg-[var(--background)] text-[var(--text-main)]">
       <BriefDocument answers={answers} result={result} />
 
-      <header className="border-b border-zinc-200 bg-white/80 backdrop-blur">
+      <header className="border-b border-[var(--border)] bg-white/90 backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
           <button onClick={onBackHome} className="text-left">
             <Brand />
           </button>
-          <button onClick={onBackHome} className="hidden rounded-full border border-zinc-200 px-4 py-2 text-sm font-medium hover:bg-zinc-50 sm:block">
+          <button onClick={onBackHome} className="hidden rounded-full border border-[var(--border)] px-4 py-2 text-sm font-semibold text-[var(--primary)] hover:bg-[var(--primary-soft)] sm:block">
             Back to homepage
           </button>
         </div>
@@ -185,7 +185,7 @@ Package: ${answers.notes.package}`
 
       <main className="mx-auto grid max-w-7xl gap-8 px-4 py-8 sm:px-6 lg:grid-cols-[1fr_360px] lg:px-8">
         <section>
-          <div className="mb-8 overflow-hidden rounded-[2rem] bg-zinc-950 p-6 text-white shadow-2xl shadow-zinc-950/20 sm:p-8">
+          <div className="mb-8 overflow-hidden rounded-[2rem] bg-[var(--primary)] p-6 text-white shadow-2xl shadow-blue-500/20 sm:p-8">
             <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
               <div>
                 <p className="mb-3 inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-sm text-zinc-200">
@@ -194,11 +194,11 @@ Package: ${answers.notes.package}`
                 <h1 className="max-w-3xl text-3xl font-black tracking-tight sm:text-5xl">
                   Shape the website around the business goal, not a blank template.
                 </h1>
-                <p className="mt-4 max-w-2xl text-zinc-300">
+                <p className="mt-4 max-w-2xl text-blue-100">
                   Choose the starting point, business type, outcomes, style, sections, features and content readiness. The result is a clear package recommendation and brief.
                 </p>
               </div>
-              <div className="rounded-3xl bg-white/10 p-4 text-sm text-zinc-200 md:w-72">
+              <div className="rounded-3xl bg-white/10 p-4 text-sm text-blue-100 md:w-72">
                 <p className="font-bold text-white">Less guessing</p>
                 <p className="mt-1">The estimate appears after the important choices are clear, so the price feels easier to understand.</p>
               </div>
@@ -261,9 +261,9 @@ Package: ${answers.notes.package}`
 
               {step === 1 && (
                 <div className="space-y-5">
-                  <div className="rounded-[1.5rem] border border-amber-200 bg-amber-50 p-5">
+                    <div className="rounded-[1.5rem] border border-[var(--cta-soft)] bg-[var(--cta-soft)] p-5">
                     <div className="flex items-start gap-3">
-                      <Goal className="mt-1 h-5 w-5 text-amber-700" />
+                      <Goal className="mt-1 h-5 w-5 text-[var(--cta-dark)]" />
                       <div>
                         <p className="font-black text-zinc-950">Pick the outcomes that would make the website worth it.</p>
                         <p className="mt-1 text-sm leading-6 text-zinc-700">A booking site, portfolio, shop and credibility site should not be structured the same way.</p>
@@ -336,7 +336,7 @@ Package: ${answers.notes.package}`
                           <p className="font-medium text-zinc-950">Smart recommendation</p>
                           <p className="mt-1 text-sm text-zinc-500">Suggested sections: {suggestions.sections.join(", ")}</p>
                         </div>
-                        <button onClick={applySuggestions} className="rounded-full bg-zinc-950 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800">
+                        <button onClick={applySuggestions} className="rounded-full bg-[var(--primary)] px-4 py-2 text-sm font-semibold text-white hover:bg-[var(--primary-dark)]">
                           Apply suggestions
                         </button>
                       </div>
@@ -471,14 +471,14 @@ Package: ${answers.notes.package}`
 
               {step === 8 && (
                 <div className="space-y-6">
-                  <div className="rounded-[1.75rem] bg-zinc-950 p-6 text-white">
+                  <div className="rounded-[1.75rem] bg-[var(--primary)] p-6 text-white">
                     <p className="mb-2 inline-flex rounded-full bg-white/10 px-3 py-1 text-sm text-zinc-200">
                       {result.packagePreference ? "Chosen package" : "Recommended for you"}
                     </p>
                     <h3 className="text-3xl font-black">{result.package.name}</h3>
                     <p className="mt-3 max-w-2xl text-zinc-300">{result.package.description}</p>
                     {result.packagePreference && result.recommendedPackageKey !== result.packageKey && (
-                      <p className="mt-3 max-w-2xl text-sm text-amber-100">
+                      <p className="mt-3 max-w-2xl text-sm text-[var(--cta-soft)]">
                         Based on the current answers, the configurator would recommend {result.recommendedPackage.name}. You can keep your chosen package or adjust it below.
                       </p>
                     )}
@@ -605,7 +605,7 @@ Package: ${answers.notes.package}`
 
               {step === 11 && (
                 <div className="space-y-6">
-                  <div className="rounded-[1.75rem] bg-zinc-950 p-6 text-white">
+                  <div className="rounded-[1.75rem] bg-[var(--primary)] p-6 text-white">
                     <div className="mb-4 inline-flex rounded-full bg-white/10 p-3">
                       <Check className="h-6 w-6" />
                     </div>
@@ -665,7 +665,7 @@ Package: ${answers.notes.package}`
               disabled={!canGoBack}
               className={cn(
                 "inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-medium transition",
-                canGoBack ? "border border-zinc-300 bg-white hover:bg-zinc-50" : "cursor-not-allowed border border-zinc-200 bg-zinc-100 text-zinc-400"
+                canGoBack ? "border border-[var(--border)] bg-white text-[var(--primary)] hover:bg-[var(--primary-soft)]" : "cursor-not-allowed border border-[var(--border)] bg-slate-100 text-slate-400"
               )}
             >
               <ArrowLeft className="h-4 w-4" /> Back
@@ -679,8 +679,8 @@ Package: ${answers.notes.package}`
                 className={cn(
                   "inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-medium transition",
                   canContinue
-                    ? "bg-zinc-950 text-white hover:bg-zinc-800"
-                    : "cursor-not-allowed bg-zinc-300 text-zinc-500"
+                    ? "bg-[var(--cta)] text-white hover:bg-[var(--cta-dark)]"
+                    : "cursor-not-allowed bg-slate-300 text-slate-500"
                 )}
               >
                 Continue <ArrowRight className="h-4 w-4" />

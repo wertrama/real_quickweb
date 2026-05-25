@@ -38,7 +38,7 @@ export function App() {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-50 text-zinc-950">
+    <div className="min-h-screen bg-[var(--background)] text-[var(--text-main)]">
       {view === "home" ? (
         <HomePage onStart={openConfigurator} />
       ) : (

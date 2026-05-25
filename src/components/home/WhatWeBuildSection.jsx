@@ -16,7 +16,7 @@ export function WhatWeBuildSection() {
     {
       icon: BarChart3,
       title: "Mobile, SEO and analytics ready",
-      text: "Your website is built for mobile users, basic Google visibility and tracking.",
+      text: "Your website is built for phones, basic Google visibility and visitor tracking.",
     },
     {
       icon: LifeBuoy,
@@ -44,15 +44,15 @@ export function WhatWeBuildSection() {
 
 function BuildCard({ icon: Icon, title, text }) {
   return (
-    <div className="group relative overflow-hidden rounded-[1.75rem] border border-zinc-200 bg-white p-6 shadow-lg shadow-zinc-200/50 transition hover:-translate-y-1 hover:border-zinc-300 hover:shadow-xl">
-      <div className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-amber-300 via-teal-300 to-rose-300" />
+    <div className="group relative overflow-hidden rounded-[1.75rem] border border-[var(--border)] bg-[var(--surface)] p-6 shadow-lg shadow-black/5 transition hover:-translate-y-1 hover:border-[var(--primary-soft)] hover:shadow-xl">
+      <div className="absolute inset-x-0 top-0 h-1.5 bg-[var(--primary)]" />
       <div className="mb-5 flex items-center gap-3">
-        <span className="rounded-2xl bg-zinc-950 p-3 text-white shadow-lg shadow-zinc-950/10">
+        <span className="rounded-2xl bg-[var(--primary-soft)] p-3 text-[var(--primary)] shadow-lg shadow-black/5">
           <Icon className="h-5 w-5" />
         </span>
-        <h3 className="text-xl font-black leading-tight text-zinc-950">{title}</h3>
+        <h3 className="text-xl font-extrabold leading-tight text-[var(--text-main)]">{title}</h3>
       </div>
-      <p className="leading-7 text-zinc-600">{text}</p>
+      <p className="leading-7 text-[var(--text-muted)]">{text}</p>
     </div>
   );
 }

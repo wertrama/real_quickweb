@@ -16,12 +16,12 @@ export function FAQSection() {
       <SectionHeader eyebrow="FAQ" title="Practical questions, plain answers." icon={FileQuestion} />
       <div className="space-y-3">
         {faqs.map(([question, answer]) => (
-          <details key={question} className="group rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm">
-            <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold">
+          <details key={question} className="group rounded-2xl border border-[var(--border)] bg-white p-5 shadow-sm">
+            <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold text-[var(--text-main)]">
               {question}
-              <ChevronDown className="h-5 w-5 transition group-open:rotate-180" />
+              <ChevronDown className="h-5 w-5 text-[var(--primary)] transition group-open:rotate-180" />
             </summary>
-            <p className="mt-3 leading-7 text-zinc-600">{answer}</p>
+            <p className="mt-3 leading-7 text-[var(--text-muted)]">{answer}</p>
           </details>
         ))}
       </div>

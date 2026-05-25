@@ -23,13 +23,13 @@ export function ProjectModeCard({ mode, selected, onSelect }) {
       className={cn(
         "relative overflow-hidden rounded-[1.75rem] border p-5 text-left transition-all",
         selected
-          ? "border-zinc-950 bg-zinc-950 text-white shadow-xl shadow-zinc-950/20"
-          : "border-zinc-200 bg-white hover:-translate-y-0.5 hover:border-zinc-400 hover:shadow-lg"
+          ? "border-[var(--primary)] bg-[var(--primary)] text-white shadow-xl shadow-blue-500/20"
+          : "border-[var(--border)] bg-white hover:-translate-y-0.5 hover:border-[var(--primary)] hover:shadow-lg"
       )}
     >
-      <div className={cn("absolute inset-x-0 top-0 h-1.5", selected ? "bg-amber-300" : "bg-gradient-to-r from-amber-300 via-teal-300 to-rose-300")} />
+      <div className={cn("absolute inset-x-0 top-0 h-1.5", selected ? "bg-[var(--cta)]" : "bg-[var(--primary-soft)]")} />
       <div className="flex items-start gap-4">
-        <span className={cn("rounded-2xl p-3", selected ? "bg-white/10 text-amber-200" : "bg-zinc-950 text-white")}>
+        <span className={cn("rounded-2xl p-3", selected ? "bg-white/10 text-[var(--cta-soft)]" : "bg-[var(--primary-soft)] text-[var(--primary)]")}>
           <Icon className="h-6 w-6" />
         </span>
         <div className="min-w-0">
@@ -41,7 +41,7 @@ export function ProjectModeCard({ mode, selected, onSelect }) {
       <div className="mt-5 grid gap-2">
         {mode.points.map((point) => (
           <span key={point} className={cn("flex items-center gap-2 text-sm font-bold", selected ? "text-zinc-200" : "text-zinc-700")}>
-            <Check className="h-4 w-4 text-teal-500" />
+            <Check className="h-4 w-4 text-[var(--success)]" />
             {point}
           </span>
         ))}
@@ -62,12 +62,12 @@ export function GoalOption({ goal, selected, onClick }) {
       className={cn(
         "group rounded-[1.5rem] border p-5 text-left transition-all",
         selected
-          ? "border-zinc-950 bg-zinc-950 text-white shadow-xl shadow-zinc-950/15"
-          : "border-zinc-200 bg-white hover:-translate-y-0.5 hover:border-zinc-400 hover:shadow-lg"
+          ? "border-[var(--primary)] bg-[var(--primary)] text-white shadow-xl shadow-blue-500/15"
+          : "border-[var(--border)] bg-white hover:-translate-y-0.5 hover:border-[var(--primary)] hover:shadow-lg"
       )}
     >
       <div className="flex items-start gap-4">
-        <span className={cn("rounded-2xl p-3", selected ? "bg-white/10 text-amber-200" : "bg-zinc-100 text-zinc-800 group-hover:bg-amber-50")}>
+        <span className={cn("rounded-2xl p-3", selected ? "bg-white/10 text-[var(--cta-soft)]" : "bg-[var(--primary-soft)] text-[var(--primary)]")}>
           <Icon className="h-5 w-5" />
         </span>
         <div className="min-w-0">
@@ -78,7 +78,7 @@ export function GoalOption({ goal, selected, onClick }) {
           <p className={cn("mt-2 text-sm leading-6", selected ? "text-zinc-300" : "text-zinc-600")}>{meta.description}</p>
         </div>
       </div>
-      <p className={cn("mt-4 inline-flex rounded-full px-3 py-1 text-xs font-black", selected ? "bg-white text-zinc-950" : "bg-teal-50 text-teal-700")}>
+      <p className={cn("mt-4 inline-flex rounded-full px-3 py-1 text-xs font-black", selected ? "bg-white text-[var(--primary)]" : "bg-[var(--success-soft)] text-[var(--success)]")}>
         {meta.outcome}
       </p>
     </button>
@@ -108,8 +108,8 @@ export function ContentReadyCard({ item, value, onChange }) {
             className={cn(
               "rounded-xl border px-4 py-2 text-sm font-bold capitalize transition",
               value === option
-                ? "border-zinc-950 bg-zinc-950 text-white"
-                : "border-zinc-200 hover:bg-zinc-50"
+                ? "border-[var(--primary)] bg-[var(--primary)] text-white"
+                : "border-[var(--border)] hover:bg-[var(--primary-soft)]"
             )}
           >
             {option === "yes" ? "Ready" : option === "no" ? "Not ready" : "Not sure"}
@@ -128,8 +128,8 @@ export function OptionButton({ selected, children, onClick, icon: Icon, descript
       className={cn(
         "group w-full rounded-2xl border p-4 text-left transition-all duration-200",
         selected
-          ? "border-zinc-950 bg-zinc-950 text-white shadow-lg shadow-zinc-950/10"
-          : "border-zinc-200 bg-white hover:border-zinc-400 hover:shadow-md"
+          ? "border-[var(--primary)] bg-[var(--primary)] text-white shadow-lg shadow-blue-500/10"
+          : "border-[var(--border)] bg-white hover:border-[var(--primary)] hover:shadow-md"
       )}
     >
       <div className="flex items-start gap-3">
@@ -137,7 +137,7 @@ export function OptionButton({ selected, children, onClick, icon: Icon, descript
           <div
             className={cn(
               "mt-0.5 rounded-xl p-2.5",
-              selected ? "bg-white/10" : "bg-zinc-100 group-hover:bg-amber-50"
+              selected ? "bg-white/10" : "bg-[var(--primary-soft)] text-[var(--primary)]"
             )}
           >
             <Icon className="h-4 w-4" />
@@ -167,11 +167,11 @@ export function StepShell({ step, children }) {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -16 }}
       transition={{ duration: 0.22 }}
-      className="rounded-[2rem] border border-zinc-200 bg-white p-5 shadow-xl shadow-zinc-200/60 sm:p-8"
+      className="rounded-[2rem] border border-[var(--border)] bg-white p-5 shadow-xl shadow-blue-900/5 sm:p-8"
     >
-      <div className="mb-7 rounded-[1.75rem] border border-zinc-200 bg-zinc-50 p-4 sm:p-5">
+      <div className="mb-7 rounded-[1.75rem] border border-[var(--border)] bg-[var(--background)] p-4 sm:p-5">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-          <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-zinc-950 text-white shadow-lg shadow-zinc-950/15">
+          <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-[var(--primary-soft)] text-[var(--primary)] shadow-lg shadow-blue-500/10">
             <Icon className="h-7 w-7" />
           </div>
           <div className="min-w-0">
@@ -197,7 +197,7 @@ export function Progress({ currentStep }) {
       </div>
       <div className="h-2 overflow-hidden rounded-full bg-zinc-200">
         <motion.div
-          className="h-full rounded-full bg-gradient-to-r from-zinc-950 via-teal-700 to-amber-500"
+          className="h-full rounded-full bg-gradient-to-r from-[var(--primary)] to-[var(--cta)]"
           initial={false}
           animate={{ width: `${percent}%` }}
           transition={{ duration: 0.25 }}
@@ -369,14 +369,14 @@ export function PackageComparisonCard({ pack, answers, selected, recommended, on
       className={cn(
         "rounded-[1.75rem] border p-5",
         selected
-          ? "border-zinc-950 bg-zinc-950 text-white shadow-xl shadow-zinc-950/20"
+          ? "border-[var(--primary)] bg-[var(--primary)] text-white shadow-xl shadow-blue-500/20"
           : recommended
-          ? "border-teal-500 bg-white ring-4 ring-teal-500/10"
-          : "border-zinc-200 bg-white"
+          ? "border-[var(--success)] bg-white ring-4 ring-green-500/10"
+          : "border-[var(--border)] bg-white"
       )}
     >
       <div className="mb-4 flex items-center justify-between gap-3">
-        <span className={cn("rounded-full px-3 py-1 text-xs font-medium", selected ? "bg-white text-zinc-950" : recommended ? "bg-teal-50 text-teal-700" : "bg-zinc-100 text-zinc-600")}>
+        <span className={cn("rounded-full px-3 py-1 text-xs font-medium", selected ? "bg-white text-[var(--primary)]" : recommended ? "bg-[var(--success-soft)] text-[var(--success)]" : "bg-[var(--primary-soft)] text-[var(--primary)]")}>
           {selected ? "Selected" : recommended ? "Recommended" : pack.badge}
         </span>
         {(selected || recommended) && <Check className="h-5 w-5" />}
@@ -397,7 +397,7 @@ export function PackageComparisonCard({ pack, answers, selected, recommended, on
       <button
         type="button"
         onClick={onSelect}
-        className={cn("mt-5 w-full rounded-full px-4 py-3 text-sm font-bold transition", selected ? "bg-white text-zinc-950 hover:bg-zinc-100" : "bg-zinc-950 text-white hover:bg-zinc-800")}
+        className={cn("mt-5 w-full rounded-full px-4 py-3 text-sm font-bold transition", selected ? "bg-white text-[var(--primary)] hover:bg-[var(--primary-soft)]" : "bg-[var(--cta)] text-white hover:bg-[var(--cta-dark)]")}
       >
         {selected ? "Selected package" : `Use ${pack.shortName}`}
       </button>

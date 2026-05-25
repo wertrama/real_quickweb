@@ -11,27 +11,26 @@ export function WhoThisIsForSection() {
   ];
 
   return (
-    <section id="who-this-is-for" className="bg-zinc-950 py-20 text-white">
+    <section id="who-this-is-for" className="bg-[var(--primary-soft)] py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <SectionHeader
           eyebrow="Who this is for"
           title="This is for you if..."
           text="Start with the problem you recognize, then we shape the website around it."
           icon={Handshake}
-          invert
         />
         <div className="mx-auto grid max-w-5xl gap-3">
           {situations.map((situation) => (
-            <div key={situation} className="flex items-start gap-4 rounded-3xl border border-white/10 bg-white/[0.06] p-5 transition hover:bg-white/[0.09]">
-              <span className="mt-0.5 rounded-2xl bg-white/10 p-2 text-teal-200">
+            <div key={situation} className="flex items-start gap-4 rounded-3xl border border-[var(--primary-soft)] bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg">
+              <span className="mt-0.5 rounded-2xl bg-[var(--success-soft)] p-2 text-[var(--success)]">
                 <Check className="h-5 w-5" />
               </span>
-              <p className="text-lg font-bold leading-7">{situation}</p>
+              <p className="text-lg font-bold leading-7 text-[var(--text-main)]">{situation}</p>
             </div>
           ))}
         </div>
-        <p className="mx-auto mt-8 max-w-4xl rounded-3xl border border-white/10 bg-white/[0.06] p-5 text-center leading-8 text-zinc-300">
-          <span className="font-black text-white">Popular for:</span> barbers, salons, tattoo artists, coaches, local services, restaurants, freelancers and creatives.
+        <p className="mx-auto mt-8 max-w-4xl rounded-3xl border border-[var(--primary-soft)] bg-white p-5 text-center leading-8 text-[var(--text-muted)] shadow-sm">
+          <span className="font-black text-[var(--text-main)]">Popular for:</span> barbers, salons, tattoo artists, coaches, local services, restaurants, freelancers and creatives.
         </p>
       </div>
     </section>
