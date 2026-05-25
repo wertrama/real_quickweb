@@ -25,9 +25,9 @@ export function HomePage({ onStart }) {
   };
 
   const navItems = [
-    ["What we build", "what-we-build"],
-    ["Who it is for", "who-this-is-for"],
     ["Packages", "packages"],
+    ["What you get", "what-you-get"],
+    ["Who it is for", "who-this-is-for"],
     ["Examples", "examples"],
     ["How it works", "process"],
     ["FAQ", "faq"],
@@ -83,9 +83,9 @@ export function HomePage({ onStart }) {
 
       <main>
         <HeroSection onStart={() => start()} />
+        <PackagesSection onChoosePackage={start} onHelpChoose={() => start()} />
         <WhatWeBuildSection />
         <WhoThisIsForSection />
-        <PackagesSection onChoosePackage={start} onHelpChoose={() => start()} />
         <ExampleDirectionsSection />
         <ProcessSection />
         <FAQSection />

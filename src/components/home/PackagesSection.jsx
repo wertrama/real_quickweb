@@ -9,8 +9,8 @@ export function PackagesSection({ onChoosePackage, onHelpChoose }) {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <SectionHeader
           eyebrow="Packages"
-          title="Choose a package, or let the plan recommend one."
-          text="Path A is for people who know what they want. Path B is for people who need help choosing."
+          title="Clear packages before you start."
+          text="Pick the package that fits, or answer a few questions and we will recommend one."
           icon={BadgeEuro}
         />
         <div className="grid gap-6 lg:grid-cols-3">
@@ -18,9 +18,11 @@ export function PackagesSection({ onChoosePackage, onHelpChoose }) {
             <PackageHomeCard key={pack.key} pack={pack} featured={pack.key === "business"} onChoosePackage={onChoosePackage} />
           ))}
         </div>
-        <div className="mt-8 flex justify-center">
-          <button onClick={onHelpChoose} className="inline-flex items-center justify-center gap-2 rounded-full border border-zinc-300 bg-white px-6 py-4 font-bold text-zinc-900 transition hover:-translate-y-0.5 hover:shadow-lg">
-            <CircleHelp className="h-5 w-5" /> Not sure? Help me choose
+        <div className="mt-8 rounded-[1.75rem] border border-zinc-200 bg-zinc-50 p-5 text-center">
+          <p className="font-black text-zinc-950">Not sure which package fits?</p>
+          <p className="mt-1 text-sm text-zinc-600">Answer a few questions and we will recommend one.</p>
+          <button onClick={onHelpChoose} className="mt-4 inline-flex items-center justify-center gap-2 rounded-full border border-zinc-300 bg-white px-6 py-4 font-bold text-zinc-900 transition hover:-translate-y-0.5 hover:shadow-lg">
+            <CircleHelp className="h-5 w-5" /> Help me choose
           </button>
         </div>
       </div>

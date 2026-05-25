@@ -4,12 +4,11 @@ import { SectionHeader } from "../shared/SectionHeader";
 export function FAQSection() {
   const faqs = [
     ["Is this a website builder?", "No. You use the form to explain what you need. QuickWeb Studio uses that plan to design, build and launch the website for you."],
-    ["What if I already know the package I want?", "Choose Basic, Advanced or Premium from the homepage. The configurator opens with that package selected so you can continue toward a brief."],
-    ["What if I do not know which package fits?", "Start the website plan. Your answers help recommend the package that matches the goal, sections, features and content readiness."],
+    ["What if I already know the package I want?", "Choose Basic, Advanced or Premium from the homepage. The configurator opens with that package selected."],
+    ["What if I do not know which package fits?", "Click Help me choose. Your answers help recommend the package that fits your business goal."],
     ["Can you improve my current website?", "Yes. Choose \"Improve my current website\" at the start. We can keep what works and rebuild the parts that feel outdated, unclear or hard to use."],
-    ["Do I need all my text and photos ready?", "No. It helps, but it is not required. The form asks what you already have so content help can be included in the scope."],
-    ["Can people book, call or message me through the site?", "Yes. You can select booking, WhatsApp, contact forms, maps, payment links and other practical features during the configurator."],
-    ["Do I have to pay immediately?", "No. At the end you can choose a deposit, a short consultation or just send the brief first."],
+    ["Do I need all my text and photos ready?", "No. It helps, but it is not required. We can include content help in the scope."],
+    ["Do I have to pay immediately?", "No. At the end you can choose a deposit, a short consultation or send the brief first."],
   ];
 
   return (

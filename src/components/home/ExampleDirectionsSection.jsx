@@ -7,8 +7,8 @@ export function ExampleDirectionsSection() {
     <section id="examples" className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
       <SectionHeader
         eyebrow="Example website directions"
-        title="A few possible directions before real client work is shown."
-        text="These are example directions, not a portfolio claim. Later, real projects can become selected work."
+        title="Three simple starting points."
+        text="Not portfolio projects yet, just quick examples of how different website goals can look."
         icon={Images}
       />
       <div className="grid gap-6 lg:grid-cols-3">

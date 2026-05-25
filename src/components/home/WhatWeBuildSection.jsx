@@ -1,41 +1,43 @@
-import { BriefcaseBusiness, Images, MousePointerClick, PackageCheck } from "lucide-react";
+import { BarChart3, LifeBuoy, PackageCheck, Target, Wrench } from "lucide-react";
 import { SectionHeader } from "../shared/SectionHeader";
 
 export function WhatWeBuildSection() {
   const items = [
     {
-      icon: BriefcaseBusiness,
-      title: "Business websites",
-      text: "For local businesses that need trust, services, pricing, reviews, maps and contact flow.",
+      icon: Target,
+      title: "Website planned around your goal",
+      text: "We structure the site around bookings, leads, portfolio, trust or sales.",
     },
     {
-      icon: Images,
-      title: "Portfolio websites",
-      text: "For creatives, artists, barbers, tattoo artists and personal brands that need strong visual presentation.",
+      icon: Wrench,
+      title: "Designed and built for you",
+      text: "You do not need to use a DIY builder. We turn your answers into a finished website.",
     },
     {
-      icon: MousePointerClick,
-      title: "Conversion websites",
-      text: "For businesses that need bookings, leads, WhatsApp clicks, contact forms or payment/deposit links.",
+      icon: BarChart3,
+      title: "Mobile, SEO and analytics ready",
+      text: "Your website is built for mobile users, basic Google visibility and tracking.",
+    },
+    {
+      icon: LifeBuoy,
+      title: "Maintenance after launch",
+      text: "Small updates, fixes and support from €14/month.",
     },
   ];
 
   return (
-    <section id="what-we-build" className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+    <section id="what-you-get" className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
       <SectionHeader
-        eyebrow="What we build"
-        title="Three website types, one clear planning flow."
-        text="The first job is making the website easy to understand. The second job is building it properly."
+        eyebrow="What you get"
+        title="The important parts handled for you."
+        text="A clear website plan, a finished build, and the basics needed to launch with confidence."
         icon={PackageCheck}
       />
-      <div className="grid gap-5 lg:grid-cols-3">
+      <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
         {items.map((item) => (
           <BuildCard key={item.title} {...item} />
         ))}
       </div>
-      <p className="mx-auto mt-7 max-w-3xl text-center text-base font-semibold leading-7 text-zinc-700">
-        All websites are mobile-friendly, SEO-ready, analytics-ready and built around your business goal.
-      </p>
     </section>
   );
 }

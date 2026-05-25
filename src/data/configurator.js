@@ -336,11 +336,11 @@ export const PACKAGES = {
     ],
     homepageIncluded: [
       "One-page website",
-      "Up to 4 core sections",
-      "Mobile-friendly layout",
-      "Basic SEO setup",
-      "Contact or WhatsApp CTA",
-      "1 revision round",
+      "Up to 4 sections",
+      "Mobile-friendly design",
+      "Contact / WhatsApp CTA",
+      "Basic SEO",
+      "1 revision",
     ],
     probable: ["Hero", "Services", "About", "Contact", "WhatsApp", "Mobile design"],
     boundaries: ["No CMS", "No payment system", "No booking integration", "No multilingual setup"],
@@ -353,9 +353,9 @@ export const PACKAGES = {
     max: 899,
     monthly: 24,
     rawValue: 1230,
-    badge: "Most recommended",
-    bestFor: "A stronger business website with more sections, trust signals, maps, SEO and analytics.",
-    description: "For a stronger business website with more sections, trust signals, maps, SEO and analytics.",
+    badge: "Most popular",
+    bestFor: "Local businesses that need leads, trust, maps, reviews and analytics.",
+    description: "For local businesses that need leads, trust, maps, reviews and analytics.",
     included: [
       "One-page or small business website",
       "Up to 7 sections",
@@ -370,11 +370,13 @@ export const PACKAGES = {
     ],
     homepageIncluded: [
       "Up to 7 sections",
-      "Services and pricing structure",
-      "Reviews or gallery section",
+      "Services/pricing section",
+      "Gallery or reviews",
+      "Contact form",
       "Google Maps",
-      "SEO and analytics setup",
-      "2 revision rounds",
+      "SEO setup",
+      "Google Analytics",
+      "2 revisions",
     ],
     probable: ["Hero", "Services", "Pricing", "Gallery", "Reviews", "Contact", "Maps", "Analytics"],
     boundaries: ["No full webshop", "No custom app", "CMS/payment only in Premium"],
@@ -385,12 +387,12 @@ export const PACKAGES = {
     name: "Premium Website",
     base: 1499,
     max: 1499,
-    monthly: 34,
+    monthly: 39,
     rawValue: 2690,
     badge: "Complete website package",
-    bestFor: "A full website with advanced features like booking, CMS, payment/deposit links, multilingual setup and animations.",
+    bestFor: "Businesses that need the full website package.",
     description:
-      "For a full website with advanced features like booking, CMS, payment/deposit links, multilingual setup and animations.",
+      "For businesses that need the full website package.",
     included: [
       "Premium custom website",
       "Up to 10 sections/pages",
@@ -409,11 +411,14 @@ export const PACKAGES = {
     ],
     homepageIncluded: [
       "Up to 10 sections/pages",
+      "Premium design direction",
       "Booking integration",
-      "CMS or editable content",
-      "Payment/deposit link setup",
+      "Payment/deposit link",
+      "CMS/editable content",
       "Multilingual structure",
-      "Animations and launch support",
+      "Animations",
+      "Advanced tracking",
+      "3 revisions",
     ],
     probable: ["Custom hero", "Services", "Booking", "Payment link", "CMS", "Multilingual", "Animations", "SEO", "Analytics"],
     boundaries: ["No full custom SaaS", "No user accounts", "No complex webshop with inventory/shipping"],
@@ -422,22 +427,22 @@ export const PACKAGES = {
 
 export const EXAMPLE_DIRECTIONS = [
   {
-    title: "Premium local service website",
-    whoFor: "Local service businesses that need trust before contact.",
-    description: "Dark/clean direction with services, reviews, contact and maps.",
-    sections: ["Services", "Reviews", "Contact", "Maps"],
+    title: "Local business website",
+    whoFor: "For service businesses that need trust and contact flow.",
+    description: "Services, reviews, Google Maps, contact form and WhatsApp.",
+    sections: ["Services", "Reviews", "Maps", "WhatsApp"],
     palette: ["#111111", "#d6b179", "#f5f1e8"],
   },
   {
     title: "Visual portfolio website",
-    whoFor: "Creatives, artists, tattoo artists and personal brands.",
-    description: "Image-led direction with gallery, about section and inquiry form.",
-    sections: ["Gallery", "About", "Inquiry", "Selected work"],
+    whoFor: "For creatives, artists and personal brands.",
+    description: "Gallery, projects, about and inquiry form.",
+    sections: ["Gallery", "Projects", "About", "Inquiry"],
     palette: ["#18181b", "#db2777", "#fafafa"],
   },
   {
     title: "Booking-focused website",
-    whoFor: "Businesses that want more bookings and fewer manual messages.",
+    whoFor: "For businesses that want appointments or requests.",
     description: "Services, pricing, booking CTA, reviews and FAQ.",
     sections: ["Pricing", "Booking", "Reviews", "FAQ"],
     palette: ["#0f172a", "#14b8a6", "#f8fafc"],
@@ -446,27 +451,21 @@ export const EXAMPLE_DIRECTIONS = [
 
 export const PROCESS_STEPS = [
   {
-    title: "Choose a path",
+    title: "Choose package or answer questions",
     description:
-      "Pick a package if you already know what you want, or use the configurator if you need help deciding.",
+      "Choose Basic, Advanced or Premium, or use the configurator if you are not sure what fits.",
     icon: Compass,
   },
   {
-    title: "Define the website",
+    title: "We create the website plan",
     description:
-      "The configurator turns vague ideas into a clear brief: goal, sections, style, features and content needs.",
+      "Your answers become a clear plan for the goal, sections, style, features and package.",
     icon: Target,
   },
   {
-    title: "Confirm package",
+    title: "We build and launch it",
     description:
-      "You receive a recommended package or continue with the package you selected from the homepage.",
-    icon: PackageCheck,
-  },
-  {
-    title: "We build it",
-    description:
-      "You are not handed another DIY builder. We use the brief to design, build and launch the website.",
+      "QuickWeb Studio turns the plan into a finished website that is ready to share.",
     icon: Wrench,
   },
 ];
