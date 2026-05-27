@@ -1,5 +1,6 @@
+import { useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { BriefcaseBusiness, Check, Eye, FileText, MessageSquareText } from "lucide-react";
+import { BriefcaseBusiness, Check, ChevronDown, Eye, FileText, MessageSquareText } from "lucide-react";
 import { getContentIcon, getGoalMeta, steps } from "../../data/configurator";
 import { getPackageEstimateForDisplay } from "../../utils/configurator";
 import { cn } from "../../utils/ui";
@@ -21,12 +22,20 @@ export function ProjectModeCard({ mode, selected, onSelect }) {
       type="button"
       onClick={onSelect}
       className={cn(
-        "relative overflow-hidden rounded-[1.75rem] border p-5 text-left transition-all",
+        "relative overflow-hidden rounded-[1.75rem] border p-5 text-left transition-all hover:-translate-y-0.5 hover:shadow-xl",
         selected
           ? "border-[var(--primary)] bg-[var(--primary)] text-white shadow-xl shadow-blue-500/20"
           : "border-[var(--border)] bg-white hover:-translate-y-0.5 hover:border-[var(--primary)] hover:shadow-lg"
       )}
     >
+      <span
+        className={cn(
+          "absolute right-4 top-4 flex h-7 w-7 items-center justify-center rounded-full border-2 transition",
+          selected ? "border-white bg-white text-[var(--primary)]" : "border-zinc-300 bg-white text-transparent"
+        )}
+      >
+        <Check className="h-4 w-4" />
+      </span>
       <div className={cn("absolute inset-x-0 top-0 h-1.5", selected ? "bg-[var(--cta)]" : "bg-[var(--primary-soft)]")} />
       <div className="flex items-start gap-4">
         <span className={cn("rounded-2xl p-3", selected ? "bg-white/10 text-[var(--cta-soft)]" : "bg-[var(--primary-soft)] text-[var(--primary)]")}>
@@ -46,12 +55,11 @@ export function ProjectModeCard({ mode, selected, onSelect }) {
           </span>
         ))}
       </div>
-      {selected && <span className="mt-5 inline-flex items-center gap-2 rounded-full bg-white px-3 py-2 text-xs font-black text-zinc-950"><Check className="h-3 w-3" /> Selected</span>}
     </button>
   );
 }
 
-export function GoalOption({ goal, selected, onClick }) {
+export function GoalOption({ goal, selected, onClick, price }) {
   const meta = getGoalMeta(goal.label);
   const Icon = meta.icon;
 
@@ -60,7 +68,7 @@ export function GoalOption({ goal, selected, onClick }) {
       type="button"
       onClick={onClick}
       className={cn(
-        "group rounded-[1.5rem] border p-5 text-left transition-all",
+        "group rounded-[1.5rem] border p-5 text-left transition-all hover:-translate-y-0.5 hover:shadow-xl",
         selected
           ? "border-[var(--primary)] bg-[var(--primary)] text-white shadow-xl shadow-blue-500/15"
           : "border-[var(--border)] bg-white hover:-translate-y-0.5 hover:border-[var(--primary)] hover:shadow-lg"
@@ -70,17 +78,14 @@ export function GoalOption({ goal, selected, onClick }) {
         <span className={cn("rounded-2xl p-3", selected ? "bg-white/10 text-[var(--cta-soft)]" : "bg-[var(--primary-soft)] text-[var(--primary)]")}>
           <Icon className="h-5 w-5" />
         </span>
-        <div className="min-w-0">
+        <div className="min-w-0 flex-1 self-center">
           <div className="flex items-center gap-2">
             <h4 className="font-black">{goal.label}</h4>
             {selected && <Check className="h-4 w-4" />}
           </div>
-          <p className={cn("mt-2 text-sm leading-6", selected ? "text-zinc-300" : "text-zinc-600")}>{meta.description}</p>
         </div>
+        {price && <PricePill selected={selected}>{price}</PricePill>}
       </div>
-      <p className={cn("mt-4 inline-flex rounded-full px-3 py-1 text-xs font-black", selected ? "bg-white text-[var(--primary)]" : "bg-[var(--success-soft)] text-[var(--success)]")}>
-        {meta.outcome}
-      </p>
     </button>
   );
 }
@@ -106,13 +111,13 @@ export function ContentReadyCard({ item, value, onChange }) {
             type="button"
             onClick={() => onChange(option)}
             className={cn(
-              "rounded-xl border px-4 py-2 text-sm font-bold capitalize transition",
+              "rounded-xl border px-4 py-2 text-sm font-bold capitalize transition hover:-translate-y-0.5 hover:shadow-md",
               value === option
                 ? "border-[var(--primary)] bg-[var(--primary)] text-white"
                 : "border-[var(--border)] hover:bg-[var(--primary-soft)]"
             )}
           >
-            {option === "yes" ? "Ready" : option === "no" ? "Not ready" : "Not sure"}
+            {option === "yes" ? "Ready" : option === "no" ? `Not ready +€${item.missingPrice}` : "Not sure"}
           </button>
         ))}
       </div>
@@ -120,13 +125,13 @@ export function ContentReadyCard({ item, value, onChange }) {
   );
 }
 
-export function OptionButton({ selected, children, onClick, icon: Icon, description }) {
+export function OptionButton({ selected, children, onClick, icon: Icon, description, price }) {
   return (
     <button
       type="button"
       onClick={onClick}
       className={cn(
-        "group w-full rounded-2xl border p-4 text-left transition-all duration-200",
+        "group w-full rounded-2xl border p-4 text-left transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg",
         selected
           ? "border-[var(--primary)] bg-[var(--primary)] text-white shadow-lg shadow-blue-500/10"
           : "border-[var(--border)] bg-white hover:border-[var(--primary)] hover:shadow-md"
@@ -143,10 +148,13 @@ export function OptionButton({ selected, children, onClick, icon: Icon, descript
             <Icon className="h-4 w-4" />
           </div>
         )}
-        <div className="min-w-0">
-          <div className="flex items-center gap-2 font-bold">
-            {children}
-            {selected && <Check className="h-4 w-4" />}
+        <div className="min-w-0 flex-1">
+          <div className="flex items-start justify-between gap-3 font-bold">
+            <span className="flex min-w-0 items-center gap-2">
+              {children}
+              {selected && <Check className="h-4 w-4 shrink-0" />}
+            </span>
+            {price && <PricePill selected={selected}>{price}</PricePill>}
           </div>
           {description && (
             <p className={cn("mt-1 text-sm", selected ? "text-zinc-300" : "text-zinc-500")}>{description}</p>
@@ -157,8 +165,22 @@ export function OptionButton({ selected, children, onClick, icon: Icon, descript
   );
 }
 
+function PricePill({ selected, children }) {
+  return (
+    <span
+      className={cn(
+        "shrink-0 rounded-full px-2.5 py-1 text-xs font-black",
+        selected ? "bg-white text-[var(--primary)]" : "bg-[var(--success-soft)] text-[var(--success)]"
+      )}
+    >
+      {children}
+    </span>
+  );
+}
+
 export function StepShell({ step, children }) {
-  const Icon = steps[step].icon;
+  const stepMeta = steps[step];
+  const Icon = stepMeta.icon;
 
   return (
     <motion.div
@@ -169,24 +191,37 @@ export function StepShell({ step, children }) {
       transition={{ duration: 0.22 }}
       className="rounded-[2rem] border border-[var(--border)] bg-white p-5 shadow-xl shadow-blue-900/5 sm:p-8"
     >
-      <div className="mb-7 rounded-[1.75rem] border border-[var(--border)] bg-[var(--background)] p-4 sm:p-5">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-          <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-[var(--primary-soft)] text-[var(--primary)] shadow-lg shadow-blue-500/10">
-            <Icon className="h-7 w-7" />
-          </div>
-          <div className="min-w-0">
-            <p className="text-sm font-bold text-zinc-500">Step {step + 1} of {steps.length}</p>
-            <h2 className="mt-1 text-3xl font-black tracking-tight text-zinc-950 sm:text-4xl">{steps[step].title}</h2>
-            <p className="mt-2 max-w-2xl leading-7 text-zinc-600">{steps[step].subtitle}</p>
+      {step === 0 ? (
+        <div className="mb-7 rounded-[1.75rem] border border-[var(--border)] bg-[var(--background)] p-4 sm:p-5">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+            <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-[var(--primary-soft)] text-[var(--primary)] shadow-lg shadow-blue-500/10">
+              <Icon className="h-7 w-7" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-sm font-bold text-zinc-500">Step {step + 1} of {steps.length}</p>
+              <h2 className="mt-1 text-3xl font-black tracking-tight text-zinc-950 sm:text-4xl">{stepMeta.title}</h2>
+              <p className="mt-2 max-w-2xl leading-7 text-zinc-600">{stepMeta.subtitle}</p>
+            </div>
           </div>
         </div>
-      </div>
+      ) : (
+        <div className="mb-5 flex items-start gap-3">
+          <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--primary-soft)] text-[var(--primary)]">
+            <Icon className="h-5 w-5" />
+          </div>
+          <div>
+            <p className="text-sm font-bold text-zinc-500">Step {step + 1} of {steps.length}</p>
+            <h2 className="text-2xl font-black text-zinc-950">{stepMeta.title}</h2>
+            <p className="mt-1 max-w-2xl text-sm leading-6 text-zinc-600">{stepMeta.subtitle}</p>
+          </div>
+        </div>
+      )}
       {children}
     </motion.div>
   );
 }
 
-export function Progress({ currentStep }) {
+export function Progress({ currentStep, onStepSelect }) {
   const percent = ((currentStep + 1) / steps.length) * 100;
 
   return (
@@ -203,11 +238,38 @@ export function Progress({ currentStep }) {
           transition={{ duration: 0.25 }}
         />
       </div>
+      <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-5">
+        {steps.map((item, index) => {
+          const active = index === currentStep;
+          const complete = index < currentStep;
+
+          return (
+            <button
+              key={item.title}
+              type="button"
+              onClick={() => onStepSelect?.(index)}
+              className={cn(
+                "flex min-h-12 items-center gap-2 rounded-xl border px-3 py-2 text-left text-xs font-bold transition",
+                active
+                  ? "border-[var(--primary)] bg-[var(--primary)] text-white"
+                  : complete
+                  ? "border-[var(--success)] bg-[var(--success-soft)] text-[var(--success)]"
+                  : "border-zinc-200 bg-white text-zinc-600 hover:border-[var(--primary)]"
+              )}
+            >
+              <span className={cn("flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px]", active ? "bg-white text-[var(--primary)]" : "bg-zinc-100 text-zinc-700")}>
+                {index + 1}
+              </span>
+              <span className="min-w-0 leading-4">{item.title}</span>
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 }
 
-export function MiniBrief({ answers, result, showPrice = false }) {
+export function MiniBrief({ answers, result }) {
   return (
     <aside className="rounded-[2rem] border border-zinc-200 bg-white p-5 shadow-lg shadow-zinc-200/50 lg:sticky lg:top-6">
       <div className="mb-4 flex items-center gap-2">
@@ -224,20 +286,16 @@ export function MiniBrief({ answers, result, showPrice = false }) {
         <BriefLine label="Colors" value={answers.customColors.join(" / ")} />
         <BriefLine label="Sections" value={answers.sections.length ? answers.sections.join(", ") : "Not selected yet"} />
         <BriefLine label="Features" value={answers.functionality.length ? answers.functionality.join(", ") : "No advanced features yet"} />
-        <BriefLine label="Design" value={result.selectedDesign?.name || "Not selected yet"} />
         <BriefLine label="Urgency" value={answers.urgency} />
-        {showPrice ? (
-          <div className="rounded-2xl bg-zinc-950 p-4 text-white">
-            <p className="text-xs uppercase tracking-wide text-zinc-400">Package price</p>
-            <p className="mt-1 text-2xl font-semibold">€{result.estimatedPrice.toLocaleString("nl-NL")}</p>
-            <p className="mt-1 text-xs text-zinc-300">Deposit from €{result.deposit.toLocaleString("nl-NL")}</p>
-          </div>
-        ) : (
-          <div className="rounded-2xl bg-zinc-100 p-4 text-zinc-700">
-            <p className="font-medium">Price hidden for now</p>
-            <p className="mt-1 text-xs text-zinc-500">The estimate appears after the design direction and package comparison.</p>
-          </div>
-        )}
+        <BriefLine label="Maintenance" value={result.selectedMaintenance.label} />
+        <div className="rounded-2xl bg-zinc-950 p-4 text-white">
+          <p className="text-xs uppercase tracking-wide text-zinc-400">Current estimate</p>
+          <p className="mt-1 text-2xl font-semibold">€{result.estimatedPrice.toLocaleString("nl-NL")}</p>
+          <p className="mt-1 text-xs text-zinc-300">Deposit from €{result.deposit.toLocaleString("nl-NL")}</p>
+          <p className="mt-1 text-xs text-zinc-300">
+            {result.monthly > 0 ? `Maintenance €${result.monthly}/month` : "Maintenance optional"}
+          </p>
+        </div>
       </div>
     </aside>
   );
@@ -298,19 +356,46 @@ export function ColorEditor({ colors, updateColor, colorMode, setColorMode }) {
 }
 
 export function NotesBox({ label, value, onChange, placeholder }) {
+  const textareaRef = useRef(null);
+  const [open, setOpen] = useState(Boolean(value));
+
+  const toggleOpen = () => {
+    const nextOpen = !open;
+    setOpen(nextOpen);
+    if (nextOpen) {
+      requestAnimationFrame(() => textareaRef.current?.focus());
+    }
+  };
+
   return (
-    <label className="block rounded-[1.5rem] border border-zinc-200 bg-white p-4">
-      <span className="mb-2 flex items-center gap-2 text-sm font-medium text-zinc-700">
-        <MessageSquareText className="h-4 w-4" /> {label}
-      </span>
-      <textarea
-        value={value}
-        onChange={(event) => onChange(event.target.value)}
-        placeholder={placeholder}
-        rows={4}
-        className="w-full resize-none rounded-2xl border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm outline-none transition placeholder:text-zinc-400 focus:border-zinc-950 focus:bg-white focus:ring-4 focus:ring-zinc-950/10"
-      />
-    </label>
+    <div className="rounded-[1.5rem] border border-zinc-200 bg-white transition focus-within:border-zinc-950 focus-within:ring-4 focus-within:ring-zinc-950/10">
+      <button
+        type="button"
+        onClick={toggleOpen}
+        className="flex w-full items-center justify-between gap-3 rounded-[1.5rem] px-4 py-3 text-left text-sm font-medium text-zinc-700 transition hover:bg-zinc-50"
+        aria-expanded={open}
+      >
+        <span className="flex items-center gap-2">
+          <MessageSquareText className="h-4 w-4" /> {label}
+        </span>
+        <span className="flex items-center gap-2 text-xs font-black text-[var(--primary)]">
+          {open ? "Hide" : value ? "Edit" : "Add details"}
+          <ChevronDown className={cn("h-4 w-4 transition", open && "rotate-180")} />
+        </span>
+      </button>
+      {open && (
+        <div className="px-4 pb-4">
+          <textarea
+            ref={textareaRef}
+            value={value}
+            onChange={(event) => onChange(event.target.value)}
+            placeholder={placeholder}
+            rows={4}
+            className="w-full cursor-text resize-none rounded-2xl border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm outline-none transition placeholder:text-zinc-400 focus:border-zinc-950 focus:bg-white"
+          />
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -465,7 +550,7 @@ export function BriefDocument({ answers, result }) {
     <div className="print:block hidden" id="print-brief">
       <div className="p-10 font-sans text-zinc-950">
         <h1 className="text-3xl font-bold">Website Brief</h1>
-        <p className="mt-2 text-zinc-600">Generated from the QuickWeb Studio configurator.</p>
+        <p className="mt-2 text-zinc-600">Generated from the NaarWeb configurator.</p>
         <div className="mt-8 grid grid-cols-2 gap-6">
           <PrintSection title="Client details">
             <p>Name: {answers.lead.name || "-"}</p>
@@ -480,8 +565,8 @@ export function BriefDocument({ answers, result }) {
             <p>Package price: €{result.estimatedPrice.toLocaleString("nl-NL")}</p>
             <p>Internal raw value: €{result.internalRawValue.toLocaleString("nl-NL")}</p>
             <p>Deposit: €{result.deposit.toLocaleString("nl-NL")}</p>
+            <p>Maintainability: {answers.maintainability}</p>
             <p>Maintenance: €{result.monthly}/month</p>
-            <p>Lead score: {result.leadScore}/100</p>
           </PrintSection>
           <PrintSection title="Website direction">
             <p>Starting point: {answers.projectMode || "-"}</p>

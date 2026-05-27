@@ -9,7 +9,6 @@ import {
   Clock,
   CreditCard,
   Download,
-  Goal,
   Mail,
   Palette,
   Rocket,
@@ -20,7 +19,7 @@ import {
   BUSINESS_TYPES,
   CONTENT_ITEMS,
   FUNCTIONALITY,
-  PACKAGES,
+  MAINTENANCE_OPTIONS,
   PROJECT_MODES,
   SECTIONS,
   STYLE_DIRECTIONS,
@@ -32,43 +31,37 @@ import {
   steps,
 } from "../../data/configurator";
 import { trackEvent } from "../../utils/analytics";
-import { calculateResult, getSuggestedSelections, toggleArrayValue } from "../../utils/configurator";
+import { calculateResult, toggleArrayValue } from "../../utils/configurator";
 import { cn } from "../../utils/ui";
 import { Brand } from "../shared/Brand";
 import {
   BriefDocument,
   ColorEditor,
   ContentReadyCard,
-  DesignCard,
   GoalOption,
   Input,
-  MetricCard,
   MiniBrief,
   NotesBox,
   OptionButton,
-  PackageComparisonCard,
-  ProbableWebsiteVersion,
   Progress,
   ProjectModeCard,
-  SelectedDesignPreview,
   StepShell,
 } from "./ConfiguratorUi";
 
-export function ConfiguratorPage({ onBackHome, initialPackageKey = "" }) {
-  const [step, setStep] = useState(() => (initialPackageKey ? 8 : 0));
+export function ConfiguratorPage({ onBackHome, initialPackageKey = "starter" }) {
+  const [step, setStep] = useState(0);
+  const [colorEditorOpen, setColorEditorOpen] = useState(false);
   const [answers, setAnswers] = useState(() => ({
     ...defaultAnswers,
     packagePreference: initialPackageKey,
   }));
   const result = useMemo(() => calculateResult(answers), [answers]);
-  const suggestions = useMemo(() => getSuggestedSelections(answers.businessType, answers.goals), [answers.businessType, answers.goals]);
 
   useEffect(() => {
     trackEvent("configurator_viewed", { package_preference: initialPackageKey || "none" });
   }, [initialPackageKey]);
 
   const canGoBack = step > 0;
-  const showPriceInSidebar = step >= 8;
 
   const update = (patch) => setAnswers((prev) => ({ ...prev, ...patch }));
   const updateLead = (patch) => setAnswers((prev) => ({ ...prev, lead: { ...prev.lead, ...patch } }));
@@ -78,6 +71,9 @@ export function ConfiguratorPage({ onBackHome, initialPackageKey = "" }) {
       ...prev,
       contentReady: { ...prev.contentReady, [key]: value },
     }));
+  const allSectionsSelected = answers.sections.length === SECTIONS.length;
+  const goalPriceLabel = (goal) => (goal.weight > 0 ? `+€${goal.weight * 25}` : "Included");
+  const sectionPriceLabel = (section) => (section.weight > 0 ? `+€${section.weight * 35}` : "Included");
 
   const updateColor = (index, value) => {
     setAnswers((prev) => {
@@ -90,24 +86,34 @@ export function ConfiguratorPage({ onBackHome, initialPackageKey = "" }) {
   const selectStyle = (styleLabel) => {
     const found = STYLE_DIRECTIONS.find((item) => item.label === styleLabel);
     update({ style: styleLabel, customColors: found?.palette || answers.customColors });
+    setColorEditorOpen(false);
     trackEvent("style_selected", { style: styleLabel });
   };
 
-  const applySuggestions = () => {
-    update({ sections: suggestions.sections, functionality: suggestions.functionality, packagePreference: "" });
-    trackEvent("smart_suggestions_applied", { business_type: answers.businessType });
+  const selectAllSections = () => {
+    update({ sections: SECTIONS.map((section) => section.label), packagePreference: "" });
+    trackEvent("all_sections_selected");
+  };
+
+  const goToStep = (targetStep) => {
+    setStep(targetStep);
+    trackEvent("configurator_step_clicked", {
+      step_number: targetStep + 1,
+      step_title: steps[targetStep].title,
+    });
   };
 
   const next = () => {
     trackEvent("step_completed", { step_number: step + 1, step_title: steps[step].title });
-    if (step === 8) {
-      trackEvent("package_confirmed", {
+    if (step === 6) {
+      trackEvent("scope_pricing_confirmed", {
         package: result.package.name,
-        recommended_package: result.recommendedPackage.name,
-        package_preference: result.packagePreference || "none",
+        estimate: result.estimatedPrice,
+        urgency: answers.urgency,
+        maintenance: answers.maintainability,
       });
     }
-    if (step === 9) trackEvent("lead_submitted", { preferred_contact: answers.lead.preferredContact });
+    if (step === 7) trackEvent("lead_submitted", { preferred_contact: answers.lead.preferredContact });
     setStep((prev) => Math.min(prev + 1, steps.length - 1));
   };
 
@@ -126,12 +132,10 @@ export function ConfiguratorPage({ onBackHome, initialPackageKey = "" }) {
     (step === 3 && answers.sections.length >= 3) ||
     step === 4 ||
     step === 5 ||
-    (step === 6 && answers.urgency) ||
-    (step === 7 && result.selectedDesign) ||
-    step === 8 ||
-    (step === 9 && leadComplete) ||
-    (step === 10 && answers.nextStep) ||
-    step === 11;
+    (step === 6 && answers.urgency && answers.maintainability) ||
+    (step === 7 && leadComplete) ||
+    (step === 8 && answers.nextStep) ||
+    step === 9;
 
   const briefEmailBody = encodeURIComponent(
     `Hi, I created a website brief.
@@ -148,12 +152,13 @@ Style: ${answers.style}
 Colors: ${answers.customColors.join(", ")}
 Sections: ${answers.sections.join(", ")}
 Functionality: ${answers.functionality.join(", ") || "None"}
-Selected design: ${result.selectedDesign.name}
+Design direction: ${result.selectedDesign.name}
 Chosen package: ${result.package.name}
 Recommended package: ${result.recommendedPackage.name}
 Estimated price: €${result.estimatedPrice}
 Deposit: €${result.deposit}
 Monthly maintenance: €${result.monthly}/month
+Maintainability: ${answers.maintainability}
 Delivery: ${result.delivery}
 
 Notes:
@@ -164,7 +169,6 @@ Sections: ${answers.notes.sections}
 Functionality: ${answers.notes.functionality}
 Content: ${answers.notes.content}
 Urgency: ${answers.notes.urgency}
-Design: ${answers.notes.design}
 Package: ${answers.notes.package}`
   );
 
@@ -174,10 +178,10 @@ Package: ${answers.notes.package}`
 
       <header className="border-b border-[var(--border)] bg-white/90 backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
-          <button onClick={onBackHome} className="text-left">
+          <button onClick={onBackHome} className="text-left transition hover:-translate-y-0.5">
             <Brand />
           </button>
-          <button onClick={onBackHome} className="hidden rounded-full border border-[var(--border)] px-4 py-2 text-sm font-semibold text-[var(--primary)] hover:bg-[var(--primary-soft)] sm:block">
+          <button onClick={onBackHome} className="hidden rounded-full border border-[var(--border)] px-4 py-2 text-sm font-semibold text-[var(--primary)] transition hover:-translate-y-0.5 hover:bg-[var(--primary-soft)] sm:block">
             Back to homepage
           </button>
         </div>
@@ -185,6 +189,7 @@ Package: ${answers.notes.package}`
 
       <main className="mx-auto grid max-w-7xl gap-8 px-4 py-8 sm:px-6 lg:grid-cols-[1fr_360px] lg:px-8">
         <section>
+          {step === 0 && (
           <div className="mb-8 overflow-hidden rounded-[2rem] bg-[var(--primary)] p-6 text-white shadow-2xl shadow-blue-500/20 sm:p-8">
             <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
               <div>
@@ -204,8 +209,9 @@ Package: ${answers.notes.package}`
               </div>
             </div>
           </div>
+          )}
 
-          <Progress currentStep={step} />
+          <Progress currentStep={step} onStepSelect={goToStep} />
 
           <AnimatePresence mode="wait">
             <StepShell step={step}>
@@ -243,7 +249,6 @@ Package: ${answers.notes.package}`
                             trackEvent("business_type_selected", { business_type: type });
                           }}
                           icon={getBusinessTypeMeta(type).icon}
-                          description={getBusinessTypeMeta(type).description}
                         >
                           {type}
                         </OptionButton>
@@ -261,15 +266,6 @@ Package: ${answers.notes.package}`
 
               {step === 1 && (
                 <div className="space-y-5">
-                    <div className="rounded-[1.5rem] border border-[var(--cta-soft)] bg-[var(--cta-soft)] p-5">
-                    <div className="flex items-start gap-3">
-                      <Goal className="mt-1 h-5 w-5 text-[var(--cta-dark)]" />
-                      <div>
-                        <p className="font-black text-zinc-950">Pick the outcomes that would make the website worth it.</p>
-                        <p className="mt-1 text-sm leading-6 text-zinc-700">A booking site, portfolio, shop and credibility site should not be structured the same way.</p>
-                      </div>
-                    </div>
-                  </div>
                   <div className="grid gap-3 sm:grid-cols-2">
                     {WEBSITE_GOALS.map((goal) => (
                       <GoalOption
@@ -277,6 +273,7 @@ Package: ${answers.notes.package}`
                         goal={goal}
                         selected={answers.goals.includes(goal.label)}
                         onClick={() => update({ goals: toggleArrayValue(answers.goals, goal.label), packagePreference: "" })}
+                        price={goalPriceLabel(goal)}
                       />
                     ))}
                   </div>
@@ -292,27 +289,56 @@ Package: ${answers.notes.package}`
               {step === 2 && (
                 <div className="space-y-6">
                   <div className="grid gap-3 sm:grid-cols-2">
-                    {STYLE_DIRECTIONS.map((style) => (
-                      <OptionButton
-                        key={style.label}
-                        selected={answers.style === style.label}
-                        onClick={() => selectStyle(style.label)}
-                        icon={Palette}
-                        description={style.description}
-                      >
-                        <span className="flex items-center gap-3">
-                          {style.label}
-                          <span className="flex -space-x-1">
-                            {style.palette.map((color) => (
-                              <span key={color} className="h-4 w-4 rounded-full border border-white/60" style={{ backgroundColor: color }} />
-                            ))}
-                          </span>
-                        </span>
-                      </OptionButton>
-                    ))}
+                    {STYLE_DIRECTIONS.map((style) => {
+                      const selected = answers.style === style.label;
+
+                      return (
+                        <button
+                          key={style.label}
+                          type="button"
+                          onClick={() => selectStyle(style.label)}
+                          className={cn(
+                            "relative min-h-36 overflow-hidden rounded-2xl border p-5 text-left text-white shadow-md transition hover:-translate-y-0.5 hover:shadow-xl",
+                            selected ? "border-zinc-950 ring-4 ring-zinc-950/10" : "border-white/60"
+                          )}
+                          style={{ background: `linear-gradient(135deg, ${style.palette[0]}, ${style.palette[1]} 58%, ${style.palette[2]})` }}
+                        >
+                          <div className="absolute inset-0 bg-black/25" />
+                          <div className="relative z-10 flex h-full min-h-24 flex-col justify-between">
+                            <div className="flex items-start justify-between gap-3">
+                              <div>
+                                <h3 className="text-xl font-black">{style.label}</h3>
+                                <p className="mt-2 max-w-sm text-sm leading-6 text-white/80">{style.description}</p>
+                              </div>
+                              {selected && (
+                                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white text-[var(--primary)]">
+                                  <Check className="h-4 w-4" />
+                                </span>
+                              )}
+                            </div>
+                            <div className="mt-5 flex -space-x-2">
+                              {style.palette.map((color) => (
+                                <span key={color} className="h-7 w-7 rounded-full border-2 border-white" style={{ backgroundColor: color }} />
+                              ))}
+                            </div>
+                          </div>
+                        </button>
+                      );
+                    })}
                   </div>
 
-                  <ColorEditor colors={answers.customColors} updateColor={updateColor} colorMode={answers.colorMode} setColorMode={(value) => update({ colorMode: value })} />
+                  <button
+                    type="button"
+                    onClick={() => setColorEditorOpen((open) => !open)}
+                    className="inline-flex items-center justify-center gap-2 rounded-full border border-[var(--primary)] bg-white px-5 py-3 text-sm font-bold text-[var(--primary)] transition hover:-translate-y-0.5 hover:bg-[var(--primary-soft)] hover:shadow-md"
+                  >
+                    <Palette className="h-4 w-4" />
+                    {colorEditorOpen ? "Hide custom colors" : "Customize colors"}
+                  </button>
+
+                  {colorEditorOpen && (
+                    <ColorEditor colors={answers.customColors} updateColor={updateColor} colorMode={answers.colorMode} setColorMode={(value) => update({ colorMode: value })} />
+                  )}
 
                   <NotesBox
                     label="Describe the style in your own words"
@@ -325,23 +351,22 @@ Package: ${answers.notes.package}`
 
               {step === 3 && (
                 <div className="space-y-5">
-                  <div className="rounded-2xl bg-zinc-100 p-4 text-sm text-zinc-600">
-                    Select at least three sections. You can also apply smart recommendations based on business type and goals.
-                  </div>
-
-                  {answers.businessType && (
-                    <div className="rounded-[1.5rem] border border-zinc-200 bg-white p-4">
-                      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                        <div>
-                          <p className="font-medium text-zinc-950">Smart recommendation</p>
-                          <p className="mt-1 text-sm text-zinc-500">Suggested sections: {suggestions.sections.join(", ")}</p>
-                        </div>
-                        <button onClick={applySuggestions} className="rounded-full bg-[var(--primary)] px-4 py-2 text-sm font-semibold text-white hover:bg-[var(--primary-dark)]">
-                          Apply suggestions
-                        </button>
-                      </div>
+                  <div className="flex flex-col gap-3 rounded-2xl bg-zinc-100 p-4 text-sm text-zinc-600 sm:flex-row sm:items-center sm:justify-between">
+                    <p>Select at least three sections. Extra sections after five can add +€50 each.</p>
+                    <button
+                      type="button"
+                      onClick={selectAllSections}
+                      disabled={allSectionsSelected}
+                      className={cn(
+                        "inline-flex items-center justify-center rounded-full px-4 py-2 text-sm font-semibold transition",
+                        allSectionsSelected
+                          ? "cursor-not-allowed bg-zinc-300 text-zinc-500"
+                          : "bg-[var(--primary)] text-white hover:bg-[var(--primary-dark)]"
+                      )}
+                    >
+                      {allSectionsSelected ? "All selected" : "Select all"}
+                    </button>
                     </div>
-                  )}
 
                   <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                     {SECTIONS.map((section) => (
@@ -351,6 +376,7 @@ Package: ${answers.notes.package}`
                         onClick={() => update({ sections: toggleArrayValue(answers.sections, section.label), packagePreference: "" })}
                         icon={getSectionIcon(section.label)}
                         description={section.recommended ? "Usually recommended" : "Optional / scope-dependent"}
+                        price={sectionPriceLabel(section)}
                       >
                         {section.label}
                       </OptionButton>
@@ -378,7 +404,7 @@ Package: ${answers.notes.package}`
                         selected={answers.functionality.includes(feature.label)}
                         onClick={() => update({ functionality: toggleArrayValue(answers.functionality, feature.label), packagePreference: "" })}
                         icon={feature.icon}
-                        description={`Build effort: ${feature.complexity} · from €${feature.price}`}
+                        price={`+€${feature.price}`}
                       >
                         {feature.label}
                       </OptionButton>
@@ -417,22 +443,45 @@ Package: ${answers.notes.package}`
 
               {step === 6 && (
                 <div className="space-y-5">
-                  <div className="grid gap-3">
-                    {URGENCY.map((urgency) => (
-                      <OptionButton
-                        key={urgency.label}
-                        selected={answers.urgency === urgency.label}
-                        onClick={() => update({ urgency: urgency.label })}
-                        icon={Clock}
-                        description={urgency.description}
-                      >
-                        {urgency.label}
-                      </OptionButton>
-                    ))}
+                  <div>
+                    <h3 className="mb-3 text-lg font-black text-zinc-950">Urgency</h3>
+                    <div className="grid gap-3">
+                      {URGENCY.map((urgency) => (
+                        <OptionButton
+                          key={urgency.label}
+                          selected={answers.urgency === urgency.label}
+                          onClick={() => update({ urgency: urgency.label })}
+                          icon={Clock}
+                          description={urgency.description}
+                          price={urgency.multiplier > 1 ? `x${urgency.multiplier}` : "Included"}
+                        >
+                          {urgency.label}
+                        </OptionButton>
+                      ))}
+                    </div>
                   </div>
+
+                  <div>
+                    <h3 className="mb-3 text-lg font-black text-zinc-950">Maintenance</h3>
+                    <div className="grid gap-3">
+                      {MAINTENANCE_OPTIONS.map((option) => (
+                        <OptionButton
+                          key={option.label}
+                          selected={answers.maintainability === option.label}
+                          onClick={() => update({ maintainability: option.label })}
+                          icon={option.icon}
+                          description={option.description}
+                          price={option.price > 0 ? `+€${option.price}` : "Included"}
+                        >
+                          {option.label}
+                        </OptionButton>
+                      ))}
+                    </div>
+                  </div>
+
                   <NotesBox
-                    label="Deadline or reason for urgency"
-                    placeholder="Example: I need the website before my shop opens next Friday."
+                    label="Timeline or maintenance notes"
+                    placeholder="Example: I need the website before my shop opens next Friday and want help with small updates after launch."
                     value={answers.notes.urgency}
                     onChange={(value) => updateNote("urgency", value)}
                   />
@@ -440,84 +489,6 @@ Package: ${answers.notes.package}`
               )}
 
               {step === 7 && (
-                <div className="space-y-6">
-                  <div className="rounded-2xl bg-zinc-100 p-4 text-sm text-zinc-600">
-                    These are not full free website designs. They are visual directions that help the client choose the mood before final pricing.
-                  </div>
-
-                  <ColorEditor colors={answers.customColors} updateColor={updateColor} colorMode={answers.colorMode} setColorMode={(value) => update({ colorMode: value })} />
-
-                  <div className="grid gap-5 xl:grid-cols-3">
-                    {result.designDirections.map((direction) => (
-                      <DesignCard
-                        key={direction.name}
-                        direction={direction}
-                        selected={(answers.selectedDesign || result.designDirections[0].name) === direction.name}
-                        onSelect={() => {
-                          update({ selectedDesign: direction.name });
-                          trackEvent("design_direction_selected", { direction: direction.name });
-                        }}
-                      />
-                    ))}
-                  </div>
-                  <NotesBox
-                    label="Design notes"
-                    placeholder="Example: I like the dark premium option, but make it warmer with brown/wood tones and less gold."
-                    value={answers.notes.design}
-                    onChange={(value) => updateNote("design", value)}
-                  />
-                </div>
-              )}
-
-              {step === 8 && (
-                <div className="space-y-6">
-                  <div className="rounded-[1.75rem] bg-[var(--primary)] p-6 text-white">
-                    <p className="mb-2 inline-flex rounded-full bg-white/10 px-3 py-1 text-sm text-zinc-200">
-                      {result.packagePreference ? "Chosen package" : "Recommended for you"}
-                    </p>
-                    <h3 className="text-3xl font-black">{result.package.name}</h3>
-                    <p className="mt-3 max-w-2xl text-zinc-300">{result.package.description}</p>
-                    {result.packagePreference && result.recommendedPackageKey !== result.packageKey && (
-                      <p className="mt-3 max-w-2xl text-sm text-[var(--cta-soft)]">
-                        Based on the current answers, the configurator would recommend {result.recommendedPackage.name}. You can keep your chosen package or adjust it below.
-                      </p>
-                    )}
-                    <div className="mt-6 grid gap-4 sm:grid-cols-3">
-                      <MetricCard label="Package price" value={`€${result.estimatedPrice.toLocaleString("nl-NL")}`} />
-                      <MetricCard label="Deposit from" value={`€${result.deposit.toLocaleString("nl-NL")}`} />
-                      <MetricCard label="Maintenance" value={`€${result.monthly}/mo`} />
-                    </div>
-                  </div>
-
-                  <div className="grid gap-5 lg:grid-cols-3">
-                    {Object.values(PACKAGES).map((pack) => (
-                      <PackageComparisonCard
-                        key={pack.key}
-                        pack={pack}
-                        answers={answers}
-                        result={result}
-                        selected={pack.key === result.packageKey}
-                        recommended={pack.key === result.recommendedPackageKey}
-                        onSelect={() => update({ packagePreference: pack.key })}
-                      />
-                    ))}
-                  </div>
-
-                  <div className="grid gap-5 lg:grid-cols-[1fr_0.9fr]">
-                    <ProbableWebsiteVersion answers={answers} result={result} />
-                    <SelectedDesignPreview result={result} />
-                  </div>
-
-                  <NotesBox
-                    label="Package notes"
-                    placeholder="Example: Advanced package looks right, but I may need CMS later."
-                    value={answers.notes.package}
-                    onChange={(value) => updateNote("package", value)}
-                  />
-                </div>
-              )}
-
-              {step === 9 && (
                 <div className="space-y-5">
                   <div className="rounded-2xl bg-zinc-100 p-4 text-sm text-zinc-600">
                     Your website brief is ready. Enter contact details so the brief can be sent and followed up professionally.
@@ -557,7 +528,7 @@ Package: ${answers.notes.package}`
                 </div>
               )}
 
-              {step === 10 && (
+              {step === 8 && (
                 <div className="space-y-5">
                   <div className="grid gap-4 lg:grid-cols-3">
                     {[
@@ -603,7 +574,7 @@ Package: ${answers.notes.package}`
                 </div>
               )}
 
-              {step === 11 && (
+              {step === 9 && (
                 <div className="space-y-6">
                   <div className="rounded-[1.75rem] bg-[var(--primary)] p-6 text-white">
                     <div className="mb-4 inline-flex rounded-full bg-white/10 p-3">
@@ -613,10 +584,6 @@ Package: ${answers.notes.package}`
                     <p className="mt-3 max-w-2xl text-zinc-300">
                       The client can now receive the brief, save it as a PDF, pay a deposit, or book a consultation.
                     </p>
-                    <div className="mt-5 rounded-2xl bg-white/10 p-4">
-                      <p className="text-sm text-zinc-300">Internal lead quality score</p>
-                      <p className="mt-1 text-3xl font-semibold">{result.leadScore}/100</p>
-                    </div>
                   </div>
 
                   <div className="grid gap-4 lg:grid-cols-3">
@@ -689,7 +656,7 @@ Package: ${answers.notes.package}`
           </div>
         </section>
 
-        <MiniBrief answers={answers} result={result} showPrice={showPriceInSidebar} />
+        <MiniBrief answers={answers} result={result} />
       </main>
     </div>
   );

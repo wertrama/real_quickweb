@@ -3,7 +3,7 @@ import { PACKAGES } from "../../data/configurator";
 import { cn } from "../../utils/ui";
 import { SectionHeader } from "../shared/SectionHeader";
 
-export function PackagesSection({ onChoosePackage, onHelpChoose }) {
+export function PackagesSection({ getPlanHref, onChoosePackage, onHelpChoose }) {
   return (
     <section id="packages" className="border-y border-[var(--border)] bg-[var(--surface)] py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -15,22 +15,22 @@ export function PackagesSection({ onChoosePackage, onHelpChoose }) {
         />
         <div className="grid gap-6 lg:grid-cols-3">
           {Object.values(PACKAGES).map((pack) => (
-            <PackageHomeCard key={pack.key} pack={pack} featured={pack.key === "business"} onChoosePackage={onChoosePackage} />
+            <PackageHomeCard key={pack.key} pack={pack} href={getPlanHref(pack.key)} featured={pack.key === "business"} onChoosePackage={onChoosePackage} />
           ))}
         </div>
         <div className="mt-8 rounded-[1.75rem] border border-[var(--border)] bg-[var(--background)] p-6 text-center">
           <p className="font-extrabold text-[var(--text-main)]">Not sure which package fits?</p>
           <p className="mt-1 text-sm text-[var(--text-muted)]">Answer a few questions and we will recommend one.</p>
-          <button onClick={onHelpChoose} className="mt-4 inline-flex items-center justify-center gap-2 rounded-full bg-[var(--cta)] px-6 py-4 font-semibold text-white shadow-lg shadow-black/10 transition hover:-translate-y-0.5 hover:bg-[var(--cta-dark)]">
+          <a href={getPlanHref("starter")} onClick={onHelpChoose} className="mt-4 inline-flex items-center justify-center gap-2 rounded-full bg-[var(--cta)] px-6 py-4 font-semibold text-white shadow-lg shadow-black/10 transition hover:-translate-y-0.5 hover:bg-[var(--cta-dark)]">
             <CircleHelp className="h-5 w-5" /> Help me choose
-          </button>
+          </a>
         </div>
       </div>
     </section>
   );
 }
 
-function PackageHomeCard({ pack, featured, onChoosePackage }) {
+function PackageHomeCard({ pack, href, featured, onChoosePackage }) {
   const premium = pack.key === "premium";
 
   return (
@@ -74,8 +74,9 @@ function PackageHomeCard({ pack, featured, onChoosePackage }) {
         ))}
       </ul>
       <p className="mt-6 text-sm text-[var(--text-muted)]">Maintenance from €{pack.monthly}/month</p>
-      <button
-        onClick={() => onChoosePackage(pack.key)}
+      <a
+        href={href}
+        onClick={(event) => onChoosePackage(pack.key, event)}
         className={cn(
           "mt-7 inline-flex w-full items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-semibold transition",
           featured
@@ -86,7 +87,7 @@ function PackageHomeCard({ pack, featured, onChoosePackage }) {
         )}
       >
         Choose {pack.shortName} <ArrowRight className="h-4 w-4" />
-      </button>
+      </a>
     </div>
   );
 }

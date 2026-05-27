@@ -1,11 +1,17 @@
 import {
   CONTENT_ITEMS,
   FUNCTIONALITY,
+  MAINTENANCE_OPTIONS,
   PACKAGES,
   SECTIONS,
   STYLE_DIRECTIONS,
+  URGENCY,
   WEBSITE_GOALS,
 } from "../data/configurator";
+
+function roundToTen(value) {
+  return Math.round(value / 10) * 10;
+}
 
 export function toggleArrayValue(array, value) {
   return array.includes(value) ? array.filter((item) => item !== value) : [...array, value];
@@ -132,8 +138,10 @@ export function calculateResult(answers) {
     return sum + (found?.weight || 0);
   }, 0);
 
+  const notReadyContent = CONTENT_ITEMS.filter((item) => answers.contentReady[item.key] === "no");
+  const unsureContent = CONTENT_ITEMS.filter((item) => answers.contentReady[item.key] === "unknown");
   const missingContent = CONTENT_ITEMS.filter((item) => answers.contentReady[item.key] !== "yes");
-  const contentScore = missingContent.length >= 4 ? 3 : missingContent.length >= 2 ? 2 : missingContent.length >= 1 ? 1 : 0;
+  const contentScore = notReadyContent.length >= 4 ? 3 : notReadyContent.length >= 2 ? 2 : notReadyContent.length >= 1 ? 1 : 0;
 
   const totalScore = goalScore + sectionScore + functionScore + contentScore;
   const recommendedPackageKey = getPackageKey(totalScore, answers.sections, answers.functionality);
@@ -147,17 +155,35 @@ export function calculateResult(answers) {
     return sum + (found?.price || 0);
   }, 0);
 
-  const contentPrice = missingContent.reduce((sum, item) => sum + item.missingPrice, 0);
-  const extraSections = Math.max(0, answers.sections.length - 5) * 75;
-  const internalRawValue = selectedPackage.rawValue + functionalityPrice + contentPrice + extraSections;
+  const goalPrice = goalScore * 25;
+  const sectionComplexityPrice = answers.sections.reduce((sum, section) => {
+    const found = SECTIONS.find((item) => item.label === section);
+    return sum + (found?.weight || 0) * 35;
+  }, 0);
+  const extraSections = Math.max(0, answers.sections.length - 5) * 50;
+  const sectionPrice = sectionComplexityPrice + extraSections;
+  const contentPrice = notReadyContent.reduce((sum, item) => sum + item.missingPrice, 0);
+  const selectedUrgency = URGENCY.find((item) => item.label === answers.urgency) || URGENCY[0];
+  const selectedMaintenance = MAINTENANCE_OPTIONS.find((item) => item.label === answers.maintainability) || MAINTENANCE_OPTIONS[0];
+  const maintenancePrice = selectedMaintenance.price;
+  const subtotalBeforeUrgency =
+    selectedPackage.base +
+    goalPrice +
+    sectionPrice +
+    functionalityPrice +
+    contentPrice +
+    maintenancePrice;
+  const estimatedBeforeRounding = subtotalBeforeUrgency * selectedUrgency.multiplier;
+  const estimatedPrice = Math.max(selectedPackage.base, roundToTen(estimatedBeforeRounding));
+  const urgencyPrice = Math.max(0, estimatedPrice - roundToTen(subtotalBeforeUrgency));
+  const internalRawValue = selectedPackage.rawValue + goalPrice + sectionPrice + functionalityPrice + contentPrice + maintenancePrice + urgencyPrice;
 
-  const estimatedPrice = selectedPackage.max;
   const deposit = Math.max(79, Math.round((estimatedPrice * 0.2) / 10) * 10);
 
   const delivery =
-    answers.urgency === "72h express"
+    selectedUrgency.label === "72h express"
       ? "48-72 hours, only if the scope and content are ready"
-      : answers.urgency === "7-day full package"
+      : selectedUrgency.label === "7-day full package"
       ? "Around 7 days, depending on feedback speed"
       : packageKey === "premium"
       ? "2-3 weeks"
@@ -184,21 +210,32 @@ export function calculateResult(answers) {
     packageKey,
     package: selectedPackage,
     missingContent,
+    notReadyContent,
+    unsureContent,
     functionalityPrice,
+    goalPrice,
+    sectionPrice,
     contentPrice,
     extraSections,
+    maintenancePrice,
+    selectedMaintenance,
     internalRawValue,
-    urgencyMultiplier: 1,
+    urgencyMultiplier: selectedUrgency.multiplier,
+    urgencyPrice,
     estimatedPrice,
     deposit,
     delivery,
-    monthly: selectedPackage.monthly,
+    monthly: selectedMaintenance.monthly,
     designDirections,
     selectedDesign,
     leadScore: Math.min(100, leadScore),
   };
 }
 
-export function getPackageEstimateForDisplay(packageKey) {
-  return PACKAGES[packageKey].max;
+export function getPackageEstimateForDisplay(packageKey, answers) {
+  if (answers) {
+    return calculateResult({ ...answers, packagePreference: packageKey }).estimatedPrice;
+  }
+
+  return PACKAGES[packageKey].base;
 }

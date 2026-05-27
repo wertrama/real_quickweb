@@ -25,7 +25,6 @@ import {
   MapPin,
   MapPinned,
   Megaphone,
-  PackageCheck,
   Palette,
   PenTool,
   Phone,
@@ -312,6 +311,30 @@ export const URGENCY = [
   },
 ];
 
+export const MAINTENANCE_OPTIONS = [
+  {
+    label: "Handover only",
+    description: "Launch-ready website with clear handover, no monthly care plan.",
+    price: 0,
+    monthly: 0,
+    icon: FileText,
+  },
+  {
+    label: "Basic maintenance",
+    description: "Updates, small fixes and light checks after launch.",
+    price: 75,
+    monthly: 14,
+    icon: Wrench,
+  },
+  {
+    label: "Managed growth",
+    description: "Priority updates, improvements, monitoring and ongoing support.",
+    price: 180,
+    monthly: 39,
+    icon: ShieldCheck,
+  },
+];
+
 export const PACKAGES = {
   starter: {
     key: "starter",
@@ -472,14 +495,12 @@ export const PROCESS_STEPS = [
 
 export const steps = [
   { title: "Starting point", subtitle: "Are we improving an existing site or planning a new one?", icon: Rocket, noteKey: "business" },
-  { title: "Main outcome", subtitle: "What should the website make easier for the business?", icon: Goal, noteKey: "goals" },
+  { title: "Main outcomes", subtitle: "A booking site, portfolio, shop and credibility site should not be structured the same way.", icon: Goal, noteKey: "goals" },
   { title: "Style + colors", subtitle: "Choose the visual feeling and adjust colors.", icon: Palette, noteKey: "style" },
   { title: "Required sections", subtitle: "Select the sections your website needs.", icon: Layers, noteKey: "sections" },
   { title: "Functionality", subtitle: "Choose features that affect price and complexity.", icon: Settings, noteKey: "functionality" },
   { title: "Content readiness", subtitle: "Tell us what you already have ready.", icon: FileText, noteKey: "content" },
-  { title: "Urgency", subtitle: "How fast do you need the website?", icon: Clock, noteKey: "urgency" },
-  { title: "Design preview", subtitle: "Choose a direction, edit colors and leave design notes.", icon: Sparkles, noteKey: "design" },
-  { title: "Package comparison", subtitle: "See the likely website version next to each package.", icon: PackageCheck, noteKey: "package" },
+  { title: "Timeline + maintenance", subtitle: "Urgency and maintainability affect the estimate.", icon: Clock, noteKey: "urgency" },
   { title: "Your details", subtitle: "Where should we send your website brief?", icon: User, noteKey: "lead" },
   { title: "Deposit or consultation", subtitle: "Choose the next step that feels right.", icon: CreditCard, noteKey: "next" },
   { title: "Confirmation", subtitle: "Your brief is ready.", icon: Check, noteKey: "confirmation" },
@@ -493,7 +514,7 @@ export const defaultAnswers = {
   style: "",
   customColors: ["#1F2933", "#B7791F", "#F6F4F0"],
   colorMode: "Dark",
-  sections: ["Home", "Services", "About", "Contact", "Reviews"],
+  sections: [],
   functionality: [],
   contentReady: {
     logo: "unknown",
@@ -504,6 +525,7 @@ export const defaultAnswers = {
     hosting: "unknown",
   },
   urgency: "Normal delivery",
+  maintainability: "Handover only",
   selectedDesign: "",
   lead: {
     name: "",
