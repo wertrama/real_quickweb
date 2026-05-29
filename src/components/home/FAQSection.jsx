@@ -3,7 +3,7 @@ import { SectionHeader } from "../shared/SectionHeader";
 
 export function FAQSection() {
   const faqs = [
-    ["Is this a website builder?", "No. You use the form to explain what you need. NaarWeb uses that plan to design, build and launch the website for you."],
+    ["Is this a website builder?", "No. You use the form to explain what you need. NaarWeb Studio uses that plan to design, build and launch the website for you."],
     ["What if I already know the package I want?", "Choose Basic, Advanced or Premium from the homepage. The configurator opens with that package selected."],
     ["What if I do not know which package fits?", "Click Help me choose. Your answers help recommend the package that fits your business goal."],
     ["Can you improve my current website?", "Yes. Choose \"Improve my current website\" at the start. We can keep what works and rebuild the parts that feel outdated, unclear or hard to use."],

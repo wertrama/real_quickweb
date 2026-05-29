@@ -45,6 +45,7 @@ import {
   OptionButton,
   Progress,
   ProjectModeCard,
+  StepRail,
   StepShell,
 } from "./ConfiguratorUi";
 
@@ -72,8 +73,10 @@ export function ConfiguratorPage({ onBackHome, initialPackageKey = "starter" }) 
       contentReady: { ...prev.contentReady, [key]: value },
     }));
   const allSectionsSelected = answers.sections.length === SECTIONS.length;
-  const goalPriceLabel = (goal) => (goal.weight > 0 ? `+€${goal.weight * 25}` : "Included");
-  const sectionPriceLabel = (section) => (section.weight > 0 ? `+€${section.weight * 35}` : "Included");
+  const goalPriceLabel = () => "Included";
+  const sectionPriceLabel = (section) => (section.price > 0 ? `+€${section.price}` : "Included");
+  const currentWebsiteRequired = answers.projectMode === "Improve current website";
+  const urgencyPriceLabel = (urgency) => (urgency.price > 0 ? `+€${urgency.price.toLocaleString("nl-NL")}` : "Included");
 
   const updateColor = (index, value) => {
     setAnswers((prev) => {
@@ -90,9 +93,21 @@ export function ConfiguratorPage({ onBackHome, initialPackageKey = "starter" }) 
     trackEvent("style_selected", { style: styleLabel });
   };
 
+  const selectProjectMode = (modeValue) => {
+    update({
+      projectMode: modeValue,
+      currentWebsiteUrl: modeValue === "Improve current website" ? answers.currentWebsiteUrl : "",
+      contentReady:
+        modeValue === "Improve current website"
+          ? { ...answers.contentReady, domain: "yes" }
+          : answers.contentReady,
+    });
+  };
+
   const selectAllSections = () => {
-    update({ sections: SECTIONS.map((section) => section.label), packagePreference: "" });
-    trackEvent("all_sections_selected");
+    const nextSections = allSectionsSelected ? [] : SECTIONS.map((section) => section.label);
+    update({ sections: nextSections });
+    trackEvent(allSectionsSelected ? "all_sections_cleared" : "all_sections_selected");
   };
 
   const goToStep = (targetStep) => {
@@ -126,10 +141,10 @@ export function ConfiguratorPage({ onBackHome, initialPackageKey = "starter" }) 
 
   const leadComplete = answers.lead.name && answers.lead.email && answers.lead.businessName;
   const canContinue =
-    (step === 0 && answers.projectMode && answers.businessType) ||
+    (step === 0 && answers.projectMode && (!currentWebsiteRequired || answers.currentWebsiteUrl) && answers.businessType) ||
     (step === 1 && answers.goals.length > 0) ||
     (step === 2 && answers.style) ||
-    (step === 3 && answers.sections.length >= 3) ||
+    step === 3 ||
     step === 4 ||
     step === 5 ||
     (step === 6 && answers.urgency && answers.maintainability) ||
@@ -146,6 +161,7 @@ Email: ${answers.lead.email}
 Phone: ${answers.lead.phone}
 
 Starting point: ${answers.projectMode}
+Current website: ${answers.currentWebsiteUrl || "-"}
 Business type: ${answers.businessType}
 Goals: ${answers.goals.join(", ")}
 Style: ${answers.style}
@@ -154,7 +170,6 @@ Sections: ${answers.sections.join(", ")}
 Functionality: ${answers.functionality.join(", ") || "None"}
 Design direction: ${result.selectedDesign.name}
 Chosen package: ${result.package.name}
-Recommended package: ${result.recommendedPackage.name}
 Estimated price: €${result.estimatedPrice}
 Deposit: €${result.deposit}
 Monthly maintenance: €${result.monthly}/month
@@ -187,8 +202,9 @@ Package: ${answers.notes.package}`
         </div>
       </header>
 
-      <main className="mx-auto grid max-w-7xl gap-8 px-4 py-8 sm:px-6 lg:grid-cols-[1fr_360px] lg:px-8">
-        <section>
+      <main className="mx-auto grid max-w-[96rem] gap-6 px-4 py-8 sm:px-6 lg:px-8 xl:grid-cols-[170px_minmax(0,1fr)_300px] 2xl:grid-cols-[180px_minmax(0,1fr)_320px]">
+        <StepRail currentStep={step} onStepSelect={goToStep} />
+        <section className="min-w-0">
           {step === 0 && (
           <div className="mb-8 overflow-hidden rounded-[2rem] bg-[var(--primary)] p-6 text-white shadow-2xl shadow-blue-500/20 sm:p-8">
             <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
@@ -228,12 +244,23 @@ Package: ${answers.notes.package}`
                           key={mode.value}
                           mode={mode}
                           selected={answers.projectMode === mode.value}
-                          onSelect={() => update({ projectMode: mode.value })}
+                          onSelect={() => selectProjectMode(mode.value)}
                         />
                       ))}
                     </div>
                   </div>
 
+                  {currentWebsiteRequired && (
+                    <Input
+                      label="Current website link"
+                      type="url"
+                      value={answers.currentWebsiteUrl}
+                      onChange={(value) => update({ currentWebsiteUrl: value })}
+                      placeholder="https://yourwebsite.com"
+                    />
+                  )}
+
+                  {answers.projectMode && (
                   <div>
                     <div className="mb-3 flex items-center gap-2">
                       <Building2 className="h-5 w-5 text-zinc-700" />
@@ -245,7 +272,7 @@ Package: ${answers.notes.package}`
                           key={type}
                           selected={answers.businessType === type}
                           onClick={() => {
-                            update({ businessType: type, packagePreference: "" });
+                            update({ businessType: type });
                             trackEvent("business_type_selected", { business_type: type });
                           }}
                           icon={getBusinessTypeMeta(type).icon}
@@ -255,6 +282,7 @@ Package: ${answers.notes.package}`
                       ))}
                     </div>
                   </div>
+                  )}
                   <NotesBox
                     label="Tell us more about the business"
                     placeholder="Example: I run a premium barber studio in Enschede focused on men's haircuts and beard treatments."
@@ -272,7 +300,7 @@ Package: ${answers.notes.package}`
                         key={goal.label}
                         goal={goal}
                         selected={answers.goals.includes(goal.label)}
-                        onClick={() => update({ goals: toggleArrayValue(answers.goals, goal.label), packagePreference: "" })}
+                        onClick={() => update({ goals: toggleArrayValue(answers.goals, goal.label) })}
                         price={goalPriceLabel(goal)}
                       />
                     ))}
@@ -289,6 +317,36 @@ Package: ${answers.notes.package}`
               {step === 2 && (
                 <div className="space-y-6">
                   <div className="grid gap-3 sm:grid-cols-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        update({ style: "Keep current colors" });
+                        setColorEditorOpen(false);
+                      }}
+                      className={cn(
+                        "relative min-h-36 overflow-hidden rounded-2xl border p-5 text-left shadow-md transition hover:-translate-y-0.5 hover:shadow-xl",
+                        answers.style === "Keep current colors" ? "border-zinc-950 bg-zinc-950 text-white ring-4 ring-zinc-950/10" : "border-zinc-200 bg-white text-zinc-950"
+                      )}
+                    >
+                      <div className="flex h-full min-h-24 flex-col justify-between">
+                        <div className="flex items-start justify-between gap-3">
+                          <div>
+                            <h3 className="text-xl font-black">Keep current colors</h3>
+                            <p className={cn("mt-2 max-w-sm text-sm leading-6", answers.style === "Keep current colors" ? "text-white/75" : "text-zinc-600")}>
+                              Use the colors from the existing website or brand.
+                            </p>
+                          </div>
+                          <span className={cn("flex h-7 w-7 shrink-0 items-center justify-center rounded-full", answers.style === "Keep current colors" ? "bg-white text-[var(--primary)]" : "bg-zinc-100 text-transparent")}>
+                            <Check className="h-4 w-4" />
+                          </span>
+                        </div>
+                        <div className="mt-5 flex -space-x-2">
+                          {answers.customColors.map((color) => (
+                            <span key={color} className="h-7 w-7 rounded-full border-2 border-white" style={{ backgroundColor: color }} />
+                          ))}
+                        </div>
+                      </div>
+                    </button>
                     {STYLE_DIRECTIONS.map((style) => {
                       const selected = answers.style === style.label;
 
@@ -310,11 +368,9 @@ Package: ${answers.notes.package}`
                                 <h3 className="text-xl font-black">{style.label}</h3>
                                 <p className="mt-2 max-w-sm text-sm leading-6 text-white/80">{style.description}</p>
                               </div>
-                              {selected && (
-                                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white text-[var(--primary)]">
-                                  <Check className="h-4 w-4" />
-                                </span>
-                              )}
+                              <span className={cn("flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white text-[var(--primary)]", selected ? "opacity-100" : "opacity-0")}>
+                                <Check className="h-4 w-4" />
+                              </span>
                             </div>
                             <div className="mt-5 flex -space-x-2">
                               {style.palette.map((color) => (
@@ -352,28 +408,27 @@ Package: ${answers.notes.package}`
               {step === 3 && (
                 <div className="space-y-5">
                   <div className="flex flex-col gap-3 rounded-2xl bg-zinc-100 p-4 text-sm text-zinc-600 sm:flex-row sm:items-center sm:justify-between">
-                    <p>Select at least three sections. Extra sections after five can add +€50 each.</p>
+                    <p>Choose the sections you want. Each selected section adds only the price shown.</p>
                     <button
                       type="button"
                       onClick={selectAllSections}
-                      disabled={allSectionsSelected}
                       className={cn(
                         "inline-flex items-center justify-center rounded-full px-4 py-2 text-sm font-semibold transition",
                         allSectionsSelected
-                          ? "cursor-not-allowed bg-zinc-300 text-zinc-500"
+                          ? "bg-zinc-950 text-white hover:bg-zinc-800"
                           : "bg-[var(--primary)] text-white hover:bg-[var(--primary-dark)]"
                       )}
                     >
-                      {allSectionsSelected ? "All selected" : "Select all"}
+                      {allSectionsSelected ? "Unselect all" : "Select all"}
                     </button>
                     </div>
 
-                  <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                  <div className="grid gap-3 sm:grid-cols-2 2xl:grid-cols-3">
                     {SECTIONS.map((section) => (
                       <OptionButton
                         key={section.label}
                         selected={answers.sections.includes(section.label)}
-                        onClick={() => update({ sections: toggleArrayValue(answers.sections, section.label), packagePreference: "" })}
+                        onClick={() => update({ sections: toggleArrayValue(answers.sections, section.label) })}
                         icon={getSectionIcon(section.label)}
                         description={section.recommended ? "Usually recommended" : "Optional / scope-dependent"}
                         price={sectionPriceLabel(section)}
@@ -395,14 +450,14 @@ Package: ${answers.notes.package}`
               {step === 4 && (
                 <div className="space-y-5">
                   <div className="rounded-2xl bg-zinc-100 p-4 text-sm text-zinc-600">
-                    These features affect complexity and pricing. You can skip advanced features if the website only needs standard information and contact details.
+                    Choose only the add-ons you need. The price shown is the exact amount added to the estimate.
                   </div>
                   <div className="grid gap-3 sm:grid-cols-2">
                     {FUNCTIONALITY.map((feature) => (
                       <OptionButton
                         key={feature.label}
                         selected={answers.functionality.includes(feature.label)}
-                        onClick={() => update({ functionality: toggleArrayValue(answers.functionality, feature.label), packagePreference: "" })}
+                        onClick={() => update({ functionality: toggleArrayValue(answers.functionality, feature.label) })}
                         icon={feature.icon}
                         price={`+€${feature.price}`}
                       >
@@ -424,14 +479,20 @@ Package: ${answers.notes.package}`
                   <div className="rounded-2xl bg-zinc-100 p-4 text-sm text-zinc-600">
                     Missing content does not block the project, but it affects difficulty, timeline and price.
                   </div>
-                  {CONTENT_ITEMS.map((item) => (
-                    <ContentReadyCard
-                      key={item.key}
-                      item={item}
-                      value={answers.contentReady[item.key]}
-                      onChange={(value) => updateContentReady(item.key, value)}
-                    />
-                  ))}
+                  {CONTENT_ITEMS.map((item) => {
+                    const domainCoveredByCurrentSite = currentWebsiteRequired && item.key === "domain";
+
+                    return (
+                      <ContentReadyCard
+                        key={item.key}
+                        item={item}
+                        value={answers.contentReady[item.key]}
+                        disabled={domainCoveredByCurrentSite}
+                        disabledReason="Covered by the current website link from step 1."
+                        onChange={(value) => updateContentReady(item.key, value)}
+                      />
+                    );
+                  })}
                   <NotesBox
                     label="What content do you already have?"
                     placeholder="Example: I have a logo and Instagram photos, but no website text yet."
@@ -453,7 +514,7 @@ Package: ${answers.notes.package}`
                           onClick={() => update({ urgency: urgency.label })}
                           icon={Clock}
                           description={urgency.description}
-                          price={urgency.multiplier > 1 ? `x${urgency.multiplier}` : "Included"}
+                          price={urgencyPriceLabel(urgency)}
                         >
                           {urgency.label}
                         </OptionButton>
@@ -471,7 +532,7 @@ Package: ${answers.notes.package}`
                           onClick={() => update({ maintainability: option.label })}
                           icon={option.icon}
                           description={option.description}
-                          price={option.price > 0 ? `+€${option.price}` : "Included"}
+                          price={option.monthly > 0 ? `+€${option.monthly}/month` : "Included"}
                         >
                           {option.label}
                         </OptionButton>
@@ -542,7 +603,7 @@ Package: ${answers.notes.package}`
                         label: "Book a short call",
                         value: "Book consultation",
                         icon: CalendarDays,
-                        description: "Discuss the project first before paying.",
+                        description: `Pay the refundable deposit from €${result.deposit.toLocaleString("nl-NL")} and book a call. If the call shows the project is not right, the deposit can be returned.`,
                       },
                       {
                         label: "Send me the brief",

@@ -59,13 +59,13 @@ export  function App() {
   useEffect(() => {
     const description =
       route.view === "configurator"
-        ? "Start a NaarWeb website plan from €199 and configure the package, features, timeline and project details."
-        : "NaarWeb creates clear website plans and small business websites starting from €199.";
+        ? "Start a NaarWeb Studio website plan from €199 and configure the package, features, timeline and project details."
+        : "NaarWeb Studio creates clear website plans and small business websites starting from €199.";
 
     document.title =
       route.view === "configurator"
-        ? "Start a Website Plan from €199 | NaarWeb"
-        : "NaarWeb | Website Plans for Small Businesses";
+        ? "Start a Website Plan from €199 | NaarWeb Studio"
+        : "NaarWeb Studio | Website Plans for Small Businesses";
     document.querySelector('meta[name="description"]')?.setAttribute("content", description);
   }, [route.view]);
 

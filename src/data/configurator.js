@@ -79,14 +79,14 @@ export const PROJECT_MODES = [
 ];
 
 export const WEBSITE_GOALS = [
-  { label: "Get bookings", weight: 2, tag: "conversion" },
-  { label: "Show portfolio", weight: 1, tag: "visual" },
-  { label: "Sell products", weight: 3, tag: "commerce" },
-  { label: "Collect leads", weight: 2, tag: "conversion" },
-  { label: "Build credibility", weight: 1, tag: "trust" },
-  { label: "Promote services", weight: 1, tag: "service" },
-  { label: "Replace old website", weight: 1, tag: "rebuild" },
-  { label: "Look more premium", weight: 1, tag: "brand" },
+  { label: "Get bookings", tag: "conversion" },
+  { label: "Show portfolio", tag: "visual" },
+  { label: "Sell products", tag: "commerce" },
+  { label: "Collect leads", tag: "conversion" },
+  { label: "Build credibility", tag: "trust" },
+  { label: "Promote services", tag: "service" },
+  { label: "Replace old website", tag: "rebuild" },
+  { label: "Look more premium", tag: "brand" },
 ];
 
 export const GOAL_META = {
@@ -255,33 +255,33 @@ export const STYLE_DIRECTIONS = [
 ];
 
 export const SECTIONS = [
-  { label: "Home", weight: 0, recommended: true },
-  { label: "Services", weight: 1, recommended: true },
-  { label: "Pricing", weight: 1, recommended: true },
-  { label: "Gallery", weight: 1, recommended: false },
-  { label: "About", weight: 1, recommended: true },
-  { label: "Contact", weight: 0, recommended: true },
-  { label: "Booking", weight: 2, recommended: false },
-  { label: "Reviews", weight: 1, recommended: true },
-  { label: "FAQ", weight: 1, recommended: false },
-  { label: "Blog", weight: 2, recommended: false },
-  { label: "Shop", weight: 4, recommended: false },
-  { label: "Location", weight: 1, recommended: false },
-  { label: "Before / After", weight: 1, recommended: false },
+  { label: "Home", price: 0, recommended: true },
+  { label: "Services", price: 35, recommended: true },
+  { label: "Pricing", price: 35, recommended: true },
+  { label: "Gallery", price: 35, recommended: false },
+  { label: "About", price: 35, recommended: true },
+  { label: "Contact", price: 0, recommended: true },
+  { label: "Booking", price: 70, recommended: false },
+  { label: "Reviews", price: 35, recommended: true },
+  { label: "FAQ", price: 35, recommended: false },
+  { label: "Blog", price: 70, recommended: false },
+  { label: "Shop", price: 140, recommended: false },
+  { label: "Location", price: 35, recommended: false },
+  { label: "Before / After", price: 35, recommended: false },
 ];
 
 export const FUNCTIONALITY = [
-  { label: "Booking system", price: 150, weight: 3, icon: CalendarDays, complexity: "High" },
-  { label: "WhatsApp button", price: 30, weight: 1, icon: Phone, complexity: "Low" },
-  { label: "Google Maps", price: 50, weight: 1, icon: MapPin, complexity: "Low" },
-  { label: "Contact form", price: 60, weight: 2, icon: Mail, complexity: "Medium" },
-  { label: "Online payment / deposit link", price: 180, weight: 4, icon: CreditCard, complexity: "High" },
-  { label: "CMS / editable content", price: 300, weight: 5, icon: Settings, complexity: "High" },
-  { label: "Multilingual", price: 200, weight: 4, icon: Globe2, complexity: "High" },
-  { label: "Animations", price: 180, weight: 3, icon: Sparkles, complexity: "Medium / High" },
-  { label: "SEO setup", price: 100, weight: 2, icon: Search, complexity: "Medium" },
-  { label: "Google Analytics", price: 90, weight: 2, icon: BarChart3, complexity: "Medium" },
-  { label: "Cookie / analytics consent", price: 90, weight: 2, icon: ShieldCheck, complexity: "Medium" },
+  { label: "Booking system", price: 150, icon: CalendarDays },
+  { label: "WhatsApp button", price: 30, icon: Phone },
+  { label: "Google Maps", price: 50, icon: MapPin },
+  { label: "Contact form", price: 60, icon: Mail },
+  { label: "Online payment / deposit link", price: 180, icon: CreditCard },
+  { label: "CMS / editable content", price: 300, icon: Settings },
+  { label: "Multilingual", price: 200, icon: Globe2 },
+  { label: "Animations", price: 180, icon: Sparkles },
+  { label: "SEO setup", price: 100, icon: Search },
+  { label: "Google Analytics", price: 90, icon: BarChart3 },
+  { label: "Cookie / analytics consent", price: 90, icon: ShieldCheck },
 ];
 
 export const CONTENT_ITEMS = [
@@ -297,17 +297,17 @@ export const URGENCY = [
   {
     label: "Normal delivery",
     description: "Best for most projects. Usually 7-14 days depending on scope.",
-    multiplier: 1,
-  },
-  {
-    label: "72h express",
-    description: "For simple/controlled websites where content is mostly ready.",
-    multiplier: 1.3,
+    price: 0,
   },
   {
     label: "7-day full package",
     description: "Faster full-service delivery with priority planning and execution.",
-    multiplier: 1.15,
+    price: 0,
+  },
+  {
+    label: "72h express",
+    description: "For simple/controlled websites where content is mostly ready.",
+    price: 0,
   },
 ];
 
@@ -322,14 +322,14 @@ export const MAINTENANCE_OPTIONS = [
   {
     label: "Basic maintenance",
     description: "Updates, small fixes and light checks after launch.",
-    price: 75,
+    price: 0,
     monthly: 14,
     icon: Wrench,
   },
   {
     label: "Managed growth",
     description: "Priority updates, improvements, monitoring and ongoing support.",
-    price: 180,
+    price: 0,
     monthly: 39,
     icon: ShieldCheck,
   },
@@ -498,7 +498,7 @@ export const steps = [
   { title: "Main outcomes", subtitle: "A booking site, portfolio, shop and credibility site should not be structured the same way.", icon: Goal, noteKey: "goals" },
   { title: "Style + colors", subtitle: "Choose the visual feeling and adjust colors.", icon: Palette, noteKey: "style" },
   { title: "Required sections", subtitle: "Select the sections your website needs.", icon: Layers, noteKey: "sections" },
-  { title: "Functionality", subtitle: "Choose features that affect price and complexity.", icon: Settings, noteKey: "functionality" },
+  { title: "Functionality", subtitle: "Choose add-ons that affect the price.", icon: Settings, noteKey: "functionality" },
   { title: "Content readiness", subtitle: "Tell us what you already have ready.", icon: FileText, noteKey: "content" },
   { title: "Timeline + maintenance", subtitle: "Urgency and maintainability affect the estimate.", icon: Clock, noteKey: "urgency" },
   { title: "Your details", subtitle: "Where should we send your website brief?", icon: User, noteKey: "lead" },
@@ -509,6 +509,7 @@ export const steps = [
 export const defaultAnswers = {
   packagePreference: "",
   projectMode: "",
+  currentWebsiteUrl: "",
   businessType: "",
   goals: [],
   style: "",

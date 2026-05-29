@@ -17,6 +17,9 @@ export function loadGoogleAnalytics() {
   window.gtag("js", new Date());
   window.gtag("config", GA_MEASUREMENT_ID, {
     anonymize_ip: true,
+    cookie_domain: "auto",
+    cookie_update: true,
+    cookie_expires: 63072000,
   });
 }
 

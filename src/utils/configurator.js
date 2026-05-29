@@ -6,12 +6,7 @@ import {
   SECTIONS,
   STYLE_DIRECTIONS,
   URGENCY,
-  WEBSITE_GOALS,
 } from "../data/configurator";
-
-function roundToTen(value) {
-  return Math.round(value / 10) * 10;
-}
 
 export function toggleArrayValue(array, value) {
   return array.includes(value) ? array.filter((item) => item !== value) : [...array, value];
@@ -66,23 +61,8 @@ export function getSuggestedSelections(businessType, goals) {
   return { sections, functionality };
 }
 
-export function getPackageKey(score, selectedSections, selectedFunctionality) {
-  const hasShop = selectedSections.includes("Shop");
-  const mustBePremium = selectedFunctionality.some((item) =>
-    [
-      "CMS / editable content",
-      "Multilingual",
-      "Online payment / deposit link",
-    ].includes(item)
-  );
-
-  const premiumCombination =
-    selectedFunctionality.includes("Booking system") &&
-    (selectedSections.length >= 8 || selectedFunctionality.includes("Animations"));
-
-  if (hasShop || mustBePremium || premiumCombination || score >= 15) return "premium";
-  if (score >= 7 || selectedSections.length >= 5) return "business";
-  return "starter";
+export function getPackageKey(packagePreference = "starter") {
+  return PACKAGES[packagePreference] ? packagePreference : "starter";
 }
 
 export function getDesignDirections(answers) {
@@ -123,60 +103,42 @@ export function getDesignDirections(answers) {
 }
 
 export function calculateResult(answers) {
-  const goalScore = answers.goals.reduce((sum, goal) => {
-    const found = WEBSITE_GOALS.find((item) => item.label === goal);
-    return sum + (found?.weight || 0);
-  }, 0);
+  const pricedContentItems = CONTENT_ITEMS.filter(
+    (item) => !(answers.projectMode === "Improve current website" && item.key === "domain")
+  );
+  const notReadyContent = pricedContentItems.filter((item) => answers.contentReady[item.key] === "no");
+  const unsureContent = pricedContentItems.filter((item) => answers.contentReady[item.key] === "unknown");
+  const missingContent = pricedContentItems.filter((item) => answers.contentReady[item.key] !== "yes");
 
-  const sectionScore = answers.sections.reduce((sum, section) => {
-    const found = SECTIONS.find((item) => item.label === section);
-    return sum + (found?.weight || 0);
-  }, 0);
-
-  const functionScore = answers.functionality.reduce((sum, item) => {
-    const found = FUNCTIONALITY.find((feature) => feature.label === item);
-    return sum + (found?.weight || 0);
-  }, 0);
-
-  const notReadyContent = CONTENT_ITEMS.filter((item) => answers.contentReady[item.key] === "no");
-  const unsureContent = CONTENT_ITEMS.filter((item) => answers.contentReady[item.key] === "unknown");
-  const missingContent = CONTENT_ITEMS.filter((item) => answers.contentReady[item.key] !== "yes");
-  const contentScore = notReadyContent.length >= 4 ? 3 : notReadyContent.length >= 2 ? 2 : notReadyContent.length >= 1 ? 1 : 0;
-
-  const totalScore = goalScore + sectionScore + functionScore + contentScore;
-  const recommendedPackageKey = getPackageKey(totalScore, answers.sections, answers.functionality);
-  const preferredPackageKey = PACKAGES[answers.packagePreference] ? answers.packagePreference : "";
-  const packageKey = preferredPackageKey || recommendedPackageKey;
+  const packageKey = getPackageKey(answers.packagePreference);
+  const recommendedPackageKey = packageKey;
   const selectedPackage = PACKAGES[packageKey];
 
-  // Internal feature values explain complexity, but they do not push the client above the package cap.
   const functionalityPrice = answers.functionality.reduce((sum, item) => {
     const found = FUNCTIONALITY.find((feature) => feature.label === item);
     return sum + (found?.price || 0);
   }, 0);
 
-  const goalPrice = goalScore * 25;
-  const sectionComplexityPrice = answers.sections.reduce((sum, section) => {
+  const goalPrice = 0;
+  const sectionPrice = answers.sections.reduce((sum, section) => {
     const found = SECTIONS.find((item) => item.label === section);
-    return sum + (found?.weight || 0) * 35;
+    return sum + (found?.price || 0);
   }, 0);
-  const extraSections = Math.max(0, answers.sections.length - 5) * 50;
-  const sectionPrice = sectionComplexityPrice + extraSections;
+  const extraSections = 0;
   const contentPrice = notReadyContent.reduce((sum, item) => sum + item.missingPrice, 0);
   const selectedUrgency = URGENCY.find((item) => item.label === answers.urgency) || URGENCY[0];
   const selectedMaintenance = MAINTENANCE_OPTIONS.find((item) => item.label === answers.maintainability) || MAINTENANCE_OPTIONS[0];
-  const maintenancePrice = selectedMaintenance.price;
-  const subtotalBeforeUrgency =
+  const maintenancePrice = 0;
+  const urgencyPrice = selectedUrgency.price || 0;
+  const estimatedPrice =
     selectedPackage.base +
     goalPrice +
     sectionPrice +
     functionalityPrice +
     contentPrice +
-    maintenancePrice;
-  const estimatedBeforeRounding = subtotalBeforeUrgency * selectedUrgency.multiplier;
-  const estimatedPrice = Math.max(selectedPackage.base, roundToTen(estimatedBeforeRounding));
-  const urgencyPrice = Math.max(0, estimatedPrice - roundToTen(subtotalBeforeUrgency));
-  const internalRawValue = selectedPackage.rawValue + goalPrice + sectionPrice + functionalityPrice + contentPrice + maintenancePrice + urgencyPrice;
+    maintenancePrice +
+    urgencyPrice;
+  const internalRawValue = estimatedPrice;
 
   const deposit = Math.max(79, Math.round((estimatedPrice * 0.2) / 10) * 10);
 
@@ -203,10 +165,10 @@ export function calculateResult(answers) {
     (answers.functionality.length > 0 ? 5 : 0);
 
   return {
-    score: totalScore,
+    score: 0,
     recommendedPackageKey,
     recommendedPackage: PACKAGES[recommendedPackageKey],
-    packagePreference: preferredPackageKey,
+    packagePreference: packageKey,
     packageKey,
     package: selectedPackage,
     missingContent,
@@ -220,7 +182,7 @@ export function calculateResult(answers) {
     maintenancePrice,
     selectedMaintenance,
     internalRawValue,
-    urgencyMultiplier: selectedUrgency.multiplier,
+    urgencyMultiplier: 1,
     urgencyPrice,
     estimatedPrice,
     deposit,

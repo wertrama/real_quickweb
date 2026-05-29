@@ -68,7 +68,7 @@ export function GoalOption({ goal, selected, onClick, price }) {
       type="button"
       onClick={onClick}
       className={cn(
-        "group rounded-[1.5rem] border p-5 text-left transition-all hover:-translate-y-0.5 hover:shadow-xl",
+        "group relative rounded-[1.5rem] border p-5 text-left transition-all hover:-translate-y-0.5 hover:shadow-xl",
         selected
           ? "border-[var(--primary)] bg-[var(--primary)] text-white shadow-xl shadow-blue-500/15"
           : "border-[var(--border)] bg-white hover:-translate-y-0.5 hover:border-[var(--primary)] hover:shadow-lg"
@@ -80,8 +80,8 @@ export function GoalOption({ goal, selected, onClick, price }) {
         </span>
         <div className="min-w-0 flex-1 self-center">
           <div className="flex items-center gap-2">
-            <h4 className="font-black">{goal.label}</h4>
-            {selected && <Check className="h-4 w-4" />}
+            <h4 className="min-w-0 break-words font-black">{goal.label}</h4>
+            <Check className={cn("h-4 w-4 shrink-0", selected ? "opacity-100" : "opacity-0")} />
           </div>
         </div>
         {price && <PricePill selected={selected}>{price}</PricePill>}
@@ -90,18 +90,20 @@ export function GoalOption({ goal, selected, onClick, price }) {
   );
 }
 
-export function ContentReadyCard({ item, value, onChange }) {
+export function ContentReadyCard({ item, value, onChange, disabled = false, disabledReason = "" }) {
   const Icon = getContentIcon(item.key);
 
   return (
-    <div className="rounded-2xl border border-zinc-200 bg-white p-4">
+    <div className={cn("rounded-2xl border border-zinc-200 bg-white p-4 transition", disabled && "opacity-45")}>
       <div className="mb-4 flex items-start gap-3">
         <span className="rounded-2xl bg-zinc-100 p-3 text-zinc-800">
           <Icon className="h-5 w-5" />
         </span>
         <div>
           <p className="font-black text-zinc-950">{item.label}</p>
-          <p className="mt-1 text-sm text-zinc-500">If missing, planning/support may add from €{item.missingPrice}.</p>
+          <p className="mt-1 text-sm text-zinc-500">
+            {disabled ? disabledReason : `If missing, planning/support may add from €${item.missingPrice}.`}
+          </p>
         </div>
       </div>
       <div className="grid gap-2 sm:grid-cols-3">
@@ -109,9 +111,10 @@ export function ContentReadyCard({ item, value, onChange }) {
           <button
             key={option}
             type="button"
+            disabled={disabled}
             onClick={() => onChange(option)}
             className={cn(
-              "rounded-xl border px-4 py-2 text-sm font-bold capitalize transition hover:-translate-y-0.5 hover:shadow-md",
+              "rounded-xl border px-4 py-2 text-sm font-bold capitalize transition hover:-translate-y-0.5 hover:shadow-md disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none",
               value === option
                 ? "border-[var(--primary)] bg-[var(--primary)] text-white"
                 : "border-[var(--border)] hover:bg-[var(--primary-soft)]"
@@ -131,7 +134,7 @@ export function OptionButton({ selected, children, onClick, icon: Icon, descript
       type="button"
       onClick={onClick}
       className={cn(
-        "group w-full rounded-2xl border p-4 text-left transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg",
+        "group relative w-full rounded-2xl border p-4 text-left transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg",
         selected
           ? "border-[var(--primary)] bg-[var(--primary)] text-white shadow-lg shadow-blue-500/10"
           : "border-[var(--border)] bg-white hover:border-[var(--primary)] hover:shadow-md"
@@ -149,17 +152,17 @@ export function OptionButton({ selected, children, onClick, icon: Icon, descript
           </div>
         )}
         <div className="min-w-0 flex-1">
-          <div className="flex items-start justify-between gap-3 font-bold">
-            <span className="flex min-w-0 items-center gap-2">
+          <div className="flex items-start gap-3 font-bold">
+            <span className="flex min-w-0 items-center gap-2 break-words">
               {children}
-              {selected && <Check className="h-4 w-4 shrink-0" />}
+              <Check className={cn("h-4 w-4 shrink-0", selected ? "opacity-100" : "opacity-0")} />
             </span>
-            {price && <PricePill selected={selected}>{price}</PricePill>}
           </div>
           {description && (
             <p className={cn("mt-1 text-sm", selected ? "text-zinc-300" : "text-zinc-500")}>{description}</p>
           )}
         </div>
+        {price && <PricePill selected={selected}>{price}</PricePill>}
       </div>
     </button>
   );
@@ -169,7 +172,7 @@ function PricePill({ selected, children }) {
   return (
     <span
       className={cn(
-        "shrink-0 rounded-full px-2.5 py-1 text-xs font-black",
+        "ml-auto shrink-0 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-black",
         selected ? "bg-white text-[var(--primary)]" : "bg-[var(--success-soft)] text-[var(--success)]"
       )}
     >
@@ -198,7 +201,7 @@ export function StepShell({ step, children }) {
               <Icon className="h-7 w-7" />
             </div>
             <div className="min-w-0">
-              <p className="text-sm font-bold text-zinc-500">Step {step + 1} of {steps.length}</p>
+              <p className="mb-2 inline-flex rounded-2xl bg-[var(--primary-soft)] px-4 py-2 text-lg font-black text-[var(--primary)]">Step {step + 1} of {steps.length}</p>
               <h2 className="mt-1 text-3xl font-black tracking-tight text-zinc-950 sm:text-4xl">{stepMeta.title}</h2>
               <p className="mt-2 max-w-2xl leading-7 text-zinc-600">{stepMeta.subtitle}</p>
             </div>
@@ -210,7 +213,7 @@ export function StepShell({ step, children }) {
             <Icon className="h-5 w-5" />
           </div>
           <div>
-            <p className="text-sm font-bold text-zinc-500">Step {step + 1} of {steps.length}</p>
+            <p className="mb-2 inline-flex rounded-2xl bg-[var(--primary-soft)] px-4 py-2 text-lg font-black text-[var(--primary)]">Step {step + 1} of {steps.length}</p>
             <h2 className="text-2xl font-black text-zinc-950">{stepMeta.title}</h2>
             <p className="mt-1 max-w-2xl text-sm leading-6 text-zinc-600">{stepMeta.subtitle}</p>
           </div>
@@ -223,63 +226,63 @@ export function StepShell({ step, children }) {
 
 export function Progress({ currentStep, onStepSelect }) {
   const percent = ((currentStep + 1) / steps.length) * 100;
+  const current = steps[currentStep];
 
   return (
-    <div className="mb-6">
-      <div className="mb-2 flex items-center justify-between text-sm text-zinc-500">
-        <span>Website plan progress</span>
+    <div className="mb-5">
+      <div className="mb-1 flex items-center justify-between text-xs font-black text-zinc-500 sm:text-sm">
+        <button type="button" onClick={() => onStepSelect?.(currentStep)} className="transition hover:text-[var(--primary)]">
+          {currentStep + 1}/{steps.length} <span className="font-semibold">{current.title}</span>
+        </button>
         <span>{Math.round(percent)}%</span>
       </div>
-      <div className="h-2 overflow-hidden rounded-full bg-zinc-200">
+      <div className="h-1.5 overflow-hidden rounded-full bg-zinc-200">
         <motion.div
-          className="h-full rounded-full bg-gradient-to-r from-[var(--primary)] to-[var(--cta)]"
+          className="h-full rounded-full bg-[var(--accent)]"
           initial={false}
           animate={{ width: `${percent}%` }}
           transition={{ duration: 0.25 }}
         />
       </div>
-      <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-5">
-        {steps.map((item, index) => {
-          const active = index === currentStep;
-          const complete = index < currentStep;
-
-          return (
-            <button
-              key={item.title}
-              type="button"
-              onClick={() => onStepSelect?.(index)}
-              className={cn(
-                "flex min-h-12 items-center gap-2 rounded-xl border px-3 py-2 text-left text-xs font-bold transition",
-                active
-                  ? "border-[var(--primary)] bg-[var(--primary)] text-white"
-                  : complete
-                  ? "border-[var(--success)] bg-[var(--success-soft)] text-[var(--success)]"
-                  : "border-zinc-200 bg-white text-zinc-600 hover:border-[var(--primary)]"
-              )}
-            >
-              <span className={cn("flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px]", active ? "bg-white text-[var(--primary)]" : "bg-zinc-100 text-zinc-700")}>
-                {index + 1}
-              </span>
-              <span className="min-w-0 leading-4">{item.title}</span>
-            </button>
-          );
-        })}
-      </div>
     </div>
+  );
+}
+
+export function StepRail({ currentStep, onStepSelect }) {
+  return (
+    <aside className="hidden rounded-[1.5rem] border border-zinc-200 bg-white p-5 shadow-lg shadow-zinc-200/50 xl:block xl:sticky xl:top-6 xl:self-start">
+      <p className="mb-4 font-black text-zinc-950">Step</p>
+      <div className="space-y-2">
+        {steps.map((item, index) => (
+          <button
+            key={item.title}
+            type="button"
+            onClick={() => onStepSelect?.(index)}
+            className={cn(
+              "block w-full truncate rounded-lg px-1 py-0.5 text-left text-sm font-bold transition hover:-translate-y-0.5 hover:text-[var(--primary)]",
+              index === currentStep ? "text-zinc-950" : "text-zinc-500"
+            )}
+          >
+            <span className="mr-1">-</span>
+            {item.title}
+          </button>
+        ))}
+      </div>
+    </aside>
   );
 }
 
 export function MiniBrief({ answers, result }) {
   return (
-    <aside className="rounded-[2rem] border border-zinc-200 bg-white p-5 shadow-lg shadow-zinc-200/50 lg:sticky lg:top-6">
+    <aside className="rounded-[2rem] border border-zinc-200 bg-white p-5 shadow-lg shadow-zinc-200/50 xl:sticky xl:top-6">
       <div className="mb-4 flex items-center gap-2">
         <FileText className="h-5 w-5 text-zinc-700" />
         <h3 className="font-semibold text-zinc-950">Live brief</h3>
       </div>
       <div className="space-y-4 text-sm">
         <BriefLine label="Package" value={result.package.name} />
-        <BriefLine label="Recommended" value={result.recommendedPackage.name} />
         <BriefLine label="Starting point" value={answers.projectMode || "Not selected yet"} />
+        {answers.currentWebsiteUrl && <BriefLine label="Current website" value={answers.currentWebsiteUrl} />}
         <BriefLine label="Business" value={answers.businessType || "Not selected yet"} />
         <BriefLine label="Goal" value={answers.goals.length ? answers.goals.join(", ") : "Not selected yet"} />
         <BriefLine label="Style" value={answers.style || "Not selected yet"} />
@@ -290,7 +293,10 @@ export function MiniBrief({ answers, result }) {
         <BriefLine label="Maintenance" value={result.selectedMaintenance.label} />
         <div className="rounded-2xl bg-zinc-950 p-4 text-white">
           <p className="text-xs uppercase tracking-wide text-zinc-400">Current estimate</p>
-          <p className="mt-1 text-2xl font-semibold">€{result.estimatedPrice.toLocaleString("nl-NL")}</p>
+          <p className="mt-1 text-2xl font-semibold">
+            €{result.estimatedPrice.toLocaleString("nl-NL")}
+            {result.monthly > 0 && <span className="text-base text-zinc-300"> + €{result.monthly}/month</span>}
+          </p>
           <p className="mt-1 text-xs text-zinc-300">Deposit from €{result.deposit.toLocaleString("nl-NL")}</p>
           <p className="mt-1 text-xs text-zinc-300">
             {result.monthly > 0 ? `Maintenance €${result.monthly}/month` : "Maintenance optional"}
@@ -550,7 +556,7 @@ export function BriefDocument({ answers, result }) {
     <div className="print:block hidden" id="print-brief">
       <div className="p-10 font-sans text-zinc-950">
         <h1 className="text-3xl font-bold">Website Brief</h1>
-        <p className="mt-2 text-zinc-600">Generated from the NaarWeb configurator.</p>
+        <p className="mt-2 text-zinc-600">Generated from the NaarWeb Studio configurator.</p>
         <div className="mt-8 grid grid-cols-2 gap-6">
           <PrintSection title="Client details">
             <p>Name: {answers.lead.name || "-"}</p>
@@ -561,15 +567,14 @@ export function BriefDocument({ answers, result }) {
           </PrintSection>
           <PrintSection title="Package">
             <p>Chosen package: {result.package.name}</p>
-            <p>Recommended package: {result.recommendedPackage.name}</p>
             <p>Package price: €{result.estimatedPrice.toLocaleString("nl-NL")}</p>
-            <p>Internal raw value: €{result.internalRawValue.toLocaleString("nl-NL")}</p>
             <p>Deposit: €{result.deposit.toLocaleString("nl-NL")}</p>
             <p>Maintainability: {answers.maintainability}</p>
             <p>Maintenance: €{result.monthly}/month</p>
           </PrintSection>
           <PrintSection title="Website direction">
             <p>Starting point: {answers.projectMode || "-"}</p>
+            <p>Current website: {answers.currentWebsiteUrl || "-"}</p>
             <p>Business type: {answers.businessType || "-"}</p>
             <p>Goals: {answers.goals.join(", ") || "-"}</p>
             <p>Style: {answers.style || "-"}</p>
@@ -626,7 +631,7 @@ export function Input({ label, value, onChange, placeholder, type = "text" }) {
         value={value}
         onChange={(event) => onChange(event.target.value)}
         placeholder={placeholder}
-        className="w-full rounded-2xl border border-zinc-200 bg-white px-4 py-3 outline-none transition placeholder:text-zinc-400 focus:border-zinc-950 focus:ring-4 focus:ring-zinc-950/10"
+        className="w-full rounded-2xl border border-zinc-200 bg-white px-4 py-3 outline-none transition placeholder:text-zinc-400 hover:border-[var(--primary)] focus:border-zinc-950 focus:ring-4 focus:ring-zinc-950/10"
       />
     </label>
   );
