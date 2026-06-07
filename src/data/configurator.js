@@ -302,12 +302,12 @@ export const URGENCY = [
   {
     label: "7-day full package",
     description: "Faster full-service delivery with priority planning and execution.",
-    price: 0,
+    price: 100,
   },
   {
     label: "72h express",
     description: "For simple/controlled websites where content is mostly ready.",
-    price: 0,
+    price: 300,
   },
 ];
 
@@ -448,26 +448,78 @@ export const PACKAGES = {
   },
 };
 
+// Sections/functionality pre-selected when a package is chosen, mirroring each package's "included" list above.
+export const PACKAGE_DEFAULTS = {
+  starter: {
+    sections: ["Home", "Services", "About", "Contact"],
+    functionality: ["WhatsApp button"],
+  },
+  business: {
+    sections: ["Home", "Services", "Pricing", "Gallery", "Reviews", "Contact", "Location"],
+    functionality: ["Google Maps", "SEO setup", "Google Analytics"],
+  },
+  premium: {
+    sections: ["Home", "Services", "Pricing", "Gallery", "About", "Contact", "Booking", "Reviews"],
+    functionality: [
+      "Booking system",
+      "Online payment / deposit link",
+      "CMS / editable content",
+      "Multilingual",
+      "Animations",
+      "SEO setup",
+      "Google Analytics",
+      "Cookie / analytics consent",
+    ],
+  },
+};
+
+export const CALL_PREFERENCES = [
+  {
+    value: "yes",
+    label: "Yes, book a short call",
+    description: "We plan a quick call to confirm scope, answer questions and align before the work starts.",
+    icon: CalendarDays,
+  },
+  {
+    value: "no",
+    label: "No, start from the brief",
+    description: "Skip the call - the project is planned from your brief, and we only reach out if something needs clarifying.",
+    icon: Check,
+  },
+];
+
 export const EXAMPLE_DIRECTIONS = [
   {
+    category: "Local services",
     title: "Local business website",
     whoFor: "For barbers, salons, repair services, restaurants and service businesses.",
     description: "Services, pricing, reviews, contact, Google Maps and WhatsApp.",
+    result: "Helps visitors compare services, trust the business and contact you in one clear path.",
+    href: "#examples",
     sections: ["Services", "Pricing", "Reviews", "Maps"],
+    preview: ["Services", "Reviews", "Map"],
     palette: ["#334E68", "#B7791F", "#F3E8D0"],
   },
   {
+    category: "Creative portfolio",
     title: "Portfolio website",
     whoFor: "For artists, tattoo artists, creatives and personal brands.",
     description: "Visual gallery, about section, project highlights and inquiry form.",
+    result: "Shows selected work with enough context to turn interest into serious enquiries.",
+    href: "#examples",
     sections: ["Gallery", "Projects", "About", "Inquiry"],
+    preview: ["Gallery", "Projects", "Inquiry"],
     palette: ["#1F2933", "#6B7280", "#EEEAE3"],
   },
   {
+    category: "Appointments",
     title: "Booking-focused website",
     whoFor: "For businesses that need appointments or leads.",
     description: "Services, pricing, booking CTA, reviews, FAQ and contact flow.",
+    result: "Guides visitors from service details to an appointment request without extra steps.",
+    href: "#examples",
     sections: ["Services", "Booking", "Reviews", "FAQ"],
+    preview: ["Services", "Booking", "FAQ"],
     palette: ["#334E68", "#4B7F52", "#D9E2EC"],
   },
 ];
@@ -502,7 +554,7 @@ export const steps = [
   { title: "Content readiness", subtitle: "Tell us what you already have ready.", icon: FileText, noteKey: "content" },
   { title: "Timeline + maintenance", subtitle: "Urgency and maintainability affect the estimate.", icon: Clock, noteKey: "urgency" },
   { title: "Your details", subtitle: "Where should we send your website brief?", icon: User, noteKey: "lead" },
-  { title: "Deposit or consultation", subtitle: "Choose the next step that feels right.", icon: CreditCard, noteKey: "next" },
+  { title: "Deposit & call", subtitle: "A deposit secures the project, and you decide if a short call helps first.", icon: CreditCard, noteKey: "next" },
   { title: "Confirmation", subtitle: "Your brief is ready.", icon: Check, noteKey: "confirmation" },
 ];
 
@@ -535,7 +587,7 @@ export const defaultAnswers = {
     businessName: "",
     preferredContact: "Email",
   },
-  nextStep: "",
+  wantsCall: "",
   notes: {
     business: "",
     goals: "",

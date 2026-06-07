@@ -158,7 +158,8 @@ export function calculateResult(answers) {
 
   const leadScore =
     (answers.lead.email ? 25 : 0) +
-    (answers.nextStep === "Pay deposit" ? 35 : answers.nextStep === "Book consultation" ? 25 : answers.nextStep === "Send brief only" ? 10 : 0) +
+    (answers.wantsCall ? 35 : 0) +
+    (answers.wantsCall === "yes" ? 10 : 0) +
     (answers.urgency !== "Normal delivery" ? 10 : 0) +
     (missingContent.length <= 2 ? 15 : 5) +
     (answers.goals.length > 1 ? 10 : 0) +

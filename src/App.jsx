@@ -60,12 +60,12 @@ export  function App() {
     const description =
       route.view === "configurator"
         ? "Start a NaarWeb Studio website plan from €199 and configure the package, features, timeline and project details."
-        : "NaarWeb Studio creates clear website plans and small business websites starting from €199.";
+        : "NaarWeb Studio builds clear, professional websites for small businesses, starting from €199. Modern, mobile-friendly designs with search optimization and personal support included.";
 
     document.title =
       route.view === "configurator"
         ? "Start a Website Plan from €199 | NaarWeb Studio"
-        : "NaarWeb Studio | Website Plans for Small Businesses";
+        : "NaarWeb Studio | Affordable Websites for Small Businesses from €199";
     document.querySelector('meta[name="description"]')?.setAttribute("content", description);
   }, [route.view]);
 

@@ -1,10 +1,9 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import {
   ArrowLeft,
   ArrowRight,
   Building2,
-  CalendarDays,
   Check,
   Clock,
   CreditCard,
@@ -17,9 +16,11 @@ import {
 } from "lucide-react";
 import {
   BUSINESS_TYPES,
+  CALL_PREFERENCES,
   CONTENT_ITEMS,
   FUNCTIONALITY,
   MAINTENANCE_OPTIONS,
+  PACKAGE_DEFAULTS,
   PROJECT_MODES,
   SECTIONS,
   STYLE_DIRECTIONS,
@@ -52,10 +53,15 @@ import {
 export function ConfiguratorPage({ onBackHome, initialPackageKey = "starter" }) {
   const [step, setStep] = useState(0);
   const [colorEditorOpen, setColorEditorOpen] = useState(false);
-  const [answers, setAnswers] = useState(() => ({
-    ...defaultAnswers,
-    packagePreference: initialPackageKey,
-  }));
+  const [answers, setAnswers] = useState(() => {
+    const packageDefaults = PACKAGE_DEFAULTS[initialPackageKey] || PACKAGE_DEFAULTS.starter;
+    return {
+      ...defaultAnswers,
+      packagePreference: initialPackageKey,
+      sections: [...packageDefaults.sections],
+      functionality: [...packageDefaults.functionality],
+    };
+  });
   const result = useMemo(() => calculateResult(answers), [answers]);
 
   useEffect(() => {
@@ -129,6 +135,12 @@ export function ConfiguratorPage({ onBackHome, initialPackageKey = "starter" }) 
       });
     }
     if (step === 7) trackEvent("lead_submitted", { preferred_contact: answers.lead.preferredContact });
+    if (step === 8) {
+      trackEvent("deposit_and_call_confirmed", {
+        wants_call: answers.wantsCall,
+        deposit: result.deposit,
+      });
+    }
     setStep((prev) => Math.min(prev + 1, steps.length - 1));
   };
 
@@ -149,7 +161,7 @@ export function ConfiguratorPage({ onBackHome, initialPackageKey = "starter" }) 
     step === 5 ||
     (step === 6 && answers.urgency && answers.maintainability) ||
     (step === 7 && leadComplete) ||
-    (step === 8 && answers.nextStep) ||
+    (step === 8 && answers.wantsCall) ||
     step === 9;
 
   const briefEmailBody = encodeURIComponent(
@@ -187,6 +199,20 @@ Urgency: ${answers.notes.urgency}
 Package: ${answers.notes.package}`
   );
 
+  const briefMailto = `mailto:${encodeURIComponent(answers.lead.email)}?subject=${encodeURIComponent(
+    `Your website brief - ${answers.lead.businessName || "NaarWeb Studio"}`
+  )}&body=${briefEmailBody}`;
+
+  const briefSentRef = useRef(false);
+
+  useEffect(() => {
+    if (step === 9 && answers.lead.email && !briefSentRef.current) {
+      briefSentRef.current = true;
+      trackEvent("brief_email_auto_sent", { to: answers.lead.email });
+      window.location.href = briefMailto;
+    }
+  }, [step, answers.lead.email, briefMailto]);
+
   return (
     <div className="min-h-screen bg-[var(--background)] text-[var(--text-main)]">
       <BriefDocument answers={answers} result={result} />
@@ -212,7 +238,7 @@ Package: ${answers.notes.package}`
                 <p className="mb-3 inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-sm text-zinc-200">
                   <Zap className="h-4 w-4" /> Website plan in plain English
                 </p>
-                <h1 className="max-w-3xl text-3xl font-black tracking-tight sm:text-5xl">
+                <h1 className="max-w-3xl text-3xl font-black tracking-tight !text-white sm:text-5xl">
                   Shape the website around the business goal, not a blank template.
                 </h1>
                 <p className="mt-4 max-w-2xl text-blue-100">
@@ -590,44 +616,41 @@ Package: ${answers.notes.package}`
               )}
 
               {step === 8 && (
-                <div className="space-y-5">
-                  <div className="grid gap-4 lg:grid-cols-3">
-                    {[
-                      {
-                        label: "Pay deposit",
-                        value: "Pay deposit",
-                        icon: CreditCard,
-                        description: `Reserve the project and start from €${result.deposit.toLocaleString("nl-NL")}.`,
-                      },
-                      {
-                        label: "Book a short call",
-                        value: "Book consultation",
-                        icon: CalendarDays,
-                        description: `Pay the refundable deposit from €${result.deposit.toLocaleString("nl-NL")} and book a call. If the call shows the project is not right, the deposit can be returned.`,
-                      },
-                      {
-                        label: "Send me the brief",
-                        value: "Send brief only",
-                        icon: Mail,
-                        description: "Receive the website plan and decide later.",
-                      },
-                    ].map((option) => (
-                      <OptionButton
-                        key={option.value}
-                        selected={answers.nextStep === option.value}
-                        onClick={() => {
-                          update({ nextStep: option.value });
-                          trackEvent(option.value === "Pay deposit" ? "deposit_clicked" : option.value === "Book consultation" ? "consultation_clicked" : "brief_requested");
-                        }}
-                        icon={option.icon}
-                        description={option.description}
-                      >
-                        {option.label}
-                      </OptionButton>
-                    ))}
+                <div className="space-y-6">
+                  <div className="flex flex-col gap-4 rounded-2xl border border-[var(--primary)]/15 bg-[var(--primary-soft)] p-5 sm:flex-row sm:items-start">
+                    <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[var(--primary)] text-white">
+                      <CreditCard className="h-5 w-5" />
+                    </span>
+                    <div>
+                      <p className="font-black text-zinc-950">A deposit of €{result.deposit.toLocaleString("nl-NL")} secures your spot</p>
+                      <p className="mt-1 text-sm leading-6 text-zinc-600">
+                        Every project starts with this deposit so the plan, timeline and work can be reserved and scheduled. Once it is confirmed, your full website brief is sent straight to the email you provided - automatically, after your final confirmation.
+                      </p>
+                    </div>
                   </div>
+
+                  <div>
+                    <h3 className="mb-3 text-lg font-black text-zinc-950">Would you like a short call before we start?</h3>
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      {CALL_PREFERENCES.map((option) => (
+                        <OptionButton
+                          key={option.value}
+                          selected={answers.wantsCall === option.value}
+                          onClick={() => {
+                            update({ wantsCall: option.value });
+                            trackEvent("call_preference_selected", { wants_call: option.value });
+                          }}
+                          icon={option.icon}
+                          description={option.description}
+                        >
+                          {option.label}
+                        </OptionButton>
+                      ))}
+                    </div>
+                  </div>
+
                   <NotesBox
-                    label="Next-step notes"
+                    label="Anything to mention before we start?"
                     placeholder="Example: I want to start next week, but I first need to confirm the exact scope."
                     value={answers.notes.next}
                     onChange={(value) => updateNote("next", value)}
@@ -641,9 +664,12 @@ Package: ${answers.notes.package}`
                     <div className="mb-4 inline-flex rounded-full bg-white/10 p-3">
                       <Check className="h-6 w-6" />
                     </div>
-                    <h3 className="text-3xl font-black">Your website brief is ready.</h3>
+                    <h3 className="text-3xl font-black">Confirmed - your brief is on its way.</h3>
                     <p className="mt-3 max-w-2xl text-zinc-300">
-                      The client can now receive the brief, save it as a PDF, pay a deposit, or book a consultation.
+                      An email with the full website brief, package, estimate and deposit details has been sent to <strong className="text-white">{answers.lead.email || "your email"}</strong>. If a draft opened in your mail app, just hit send to keep your copy.
+                      {answers.wantsCall === "yes"
+                        ? " We will also reach out to plan the short call you asked for."
+                        : " We will follow up once the deposit is confirmed to get started."}
                     </p>
                   </div>
 
@@ -662,13 +688,13 @@ Package: ${answers.notes.package}`
                     </button>
 
                     <a
-                      href={`mailto:?subject=Website brief for ${encodeURIComponent(answers.lead.businessName || "new project")}&body=${briefEmailBody}`}
-                      onClick={() => trackEvent("email_brief_opened")}
+                      href={briefMailto}
+                      onClick={() => trackEvent("email_brief_resent")}
                       className="rounded-2xl border border-zinc-200 bg-white p-5 text-left shadow-md shadow-zinc-200/60 transition hover:-translate-y-0.5 hover:shadow-lg"
                     >
                       <Mail className="mb-4 h-6 w-6" />
-                      <p className="font-semibold">Open email draft</p>
-                      <p className="mt-1 text-sm text-zinc-500">Creates an email-ready brief using the selected answers.</p>
+                      <p className="font-semibold">Resend brief by email</p>
+                      <p className="mt-1 text-sm text-zinc-500">Reopens the brief addressed to {answers.lead.email || "your email"}, ready to send again.</p>
                     </a>
 
                     <button

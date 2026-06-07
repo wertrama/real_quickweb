@@ -1,12 +1,13 @@
+import logoMark from "../../assets/logo-mark.png";
+
 export function Brand() {
   return (
-    <div className="flex items-center gap-3 transition hover:-translate-y-0.5">
-      <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[var(--primary)] text-sm font-black text-white shadow-lg shadow-black/10 ring-4 ring-[var(--primary-soft)]">
-        NS
-      </div>
-      <div>
-        <p className="text-xl font-extrabold leading-none tracking-tight text-[var(--text-main)]">NaarWeb Studio</p>
-      </div>
+    <div className="flex items-center gap-3" aria-label="NaarWeb Studio">
+      <img src={logoMark} alt="" aria-hidden="true" className="h-10 w-10 shrink-0 sm:h-11 sm:w-11" />
+      <span className="h-7 w-px shrink-0 bg-[var(--gold)]" aria-hidden="true" />
+      <span className="font-[var(--font-heading)] text-xl font-extrabold leading-none tracking-tight text-[var(--forest)] sm:text-2xl">
+        NaarWeb <span className="font-bold text-[var(--emerald)]">Studio</span>
+      </span>
     </div>
   );
 }
